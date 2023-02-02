@@ -1,0 +1,75 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- devtools::build_readme() -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/natverse/coconat/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/natverse/coconat/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/natverse/coconat/branch/master/graph/badge.svg)](https://app.codecov.io/gh/natverse/coconat?branch=master)
+<!-- badges: end -->
+
+The goal of *coconat* is to provide dataset agnostic support for connectome analysis.
+
+It is intended to have a mix of end-user functionality and functions that are
+principally intended as building blocks for more specialised packages such as
+https://natverse.org/neuprintr/ or https://natverse.org/fafbseg/
+
+## Installation
+
+You can install the development version of coconat from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("natverse/coconat")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(coconat)
+# da2ds=neuprintr::neuprint_connection_table('DA2_lPN', details=TRUE, partners='out', conn = hbconn)
+da2ds=readRDS(system.file('sampledata/da2ds.rds', package = 'coconat'))
+da2ds
+```
+
+```{r}
+library(Matrix)
+am=partner_summary2adjacency_matrix(da2ds, inputcol = 'bodyid', outputcol = 'partner')
+image(am)
+```
+
+```{r}
+
+am2=partner_summary2adjacency_matrix(subset(da2ds, weight>=15), 
+                                     inputcol = 'bodyid', outputcol = 'partner')
+image(am2)
+```
+Now we can also cosine cluster
+
+
+We can do this for the inputs (the 5 PNs should look much the same)
+```{r}
+heatmap(cosine_sim(am, transpose = T))
+```
+
+Or the outputs
+
+```{r}
+heatmap(cosine_sim(am))
+```
+
+But it would of course be more useful if we did this based on a richer set of inputs
+
