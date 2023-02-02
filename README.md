@@ -1,6 +1,7 @@
 # coconat
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/natverse/coconat/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/natverse/coconat/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of *coconat* is to provide dataset agnostic support for connectome analysis.
