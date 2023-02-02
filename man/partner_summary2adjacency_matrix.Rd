@@ -35,7 +35,9 @@ Convert a partner summary table into an adjacency matrix
 }
 \examples{
 \dontrun{
-da2ds=neuprintr::neuprint_connection_table('DA2', details=TRUE, partners='out')
+da2ds=neuprintr::neuprint_connection_table('DA2', details=TRUE, partners='out', threshold=15)
 am=partner_summary2adjacency_matrix(da2ds, inputcol = 'partner', outputcol = 'bodyid')
+library(Matrix)
+image(am, xlab='DA2 PNs', ylab='outputs')
 }
 }

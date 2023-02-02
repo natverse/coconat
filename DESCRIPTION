@@ -19,5 +19,7 @@ Imports:
     checkmate,
     Matrix
 Suggests: 
-    spelling
+    spelling,
+    testthat (>= 3.0.0)
 Language: en-GB
+Config/testthat/edition: 3
