@@ -1,6 +1,6 @@
 #' Efficient calculation of cosine similarity for sparse or dense matrices
 #'
-#' @details This is much faster than eg \code{lsa::cosine} with the added
+#' @details This is much faster than e.g. \code{lsa::cosine} with the added
 #'   benefit that it works for sparse input matrices
 #'
 #' @param x A data matrix suitable for clustering

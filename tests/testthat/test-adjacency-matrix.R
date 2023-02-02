@@ -1,7 +1,7 @@
 test_that("partner_summary2adjacency_matrix works", {
   # hbconn=neuprintr::neuprint_login(dataset='hemibrain:v1.2.1')
   # da2ds15=neuprintr::neuprint_connection_table('DA2_lPN', details=TRUE, partners='out', threshold=15, conn = hbconn)
-  # saveRDS(da2ds15, file = 'inst/sampledata/da2ds15.rds')
+  # saveRDS(da2ds15, file = 'inst/sampledata/da2ds15.rds', version=2)
 
   da2ds15=readRDS(system.file('sampledata/da2ds15.rds', package = 'coconat'))
 

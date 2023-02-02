@@ -22,7 +22,7 @@ A square matrix, dense unless \code{sparse=TRUE} and \code{x} is
 Efficient calculation of cosine similarity for sparse or dense matrices
 }
 \details{
-This is much faster than eg \code{lsa::cosine} with the added
+This is much faster than e.g. \code{lsa::cosine} with the added
   benefit that it works for sparse input matrices
 }
 \examples{
