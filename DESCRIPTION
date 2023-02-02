@@ -19,6 +19,7 @@ Imports:
     checkmate,
     Matrix
 Suggests: 
+    covr,
     spelling,
     testthat (>= 3.0.0)
 Language: en-GB

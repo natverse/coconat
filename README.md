@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/natverse/coconat/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/natverse/coconat/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/natverse/coconat/branch/master/graph/badge.svg)](https://app.codecov.io/gh/natverse/coconat?branch=master)
 <!-- badges: end -->
 
 The goal of *coconat* is to provide dataset agnostic support for connectome analysis.
