@@ -8,6 +8,15 @@
 \description{
 Provides data source agnostic utility functions to support analysis of connectomics data by the Neuroanatomy Toolbox packages and the related natverse suite of packages.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/natverse/coconat}
+  \item \url{http://natverse.org/coconat/}
+  \item Report bugs at \url{https://github.com/natverse/coconat/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Gregory Jefferis \email{jefferis@gmail.com} (\href{https://orcid.org/0000-0002-0587-9355}{ORCID})
 

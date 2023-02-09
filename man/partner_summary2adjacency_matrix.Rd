@@ -7,10 +7,11 @@
 partner_summary2adjacency_matrix(
   x,
   sparse = TRUE,
-  inputcol = NULL,
-  outputcol = NULL,
+  inputcol = "pre_id",
+  outputcol = "post_id",
   inputids = NULL,
-  outputids = NULL
+  outputids = NULL,
+  standardise_input = T
 )
 }
 \arguments{
@@ -25,6 +26,11 @@ input and output identifiers.}
 
 \item{inputids, outputids}{Optional vectors of input/output ids to ensure that
 these are present in the output matrix.}
+
+\item{standardise_input}{whether to standardise the column names/types in the
+input dataframe. The default should work for flywire \code{fafbseg} and
+\code{neuprintr} input and ensure that we identify appropriate
+\code{pre_id}/\code{post_id} columns.}
 }
 \value{
 A matrix with inputs as rows and outputs (downstream neurons) as
