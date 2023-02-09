@@ -51,10 +51,11 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">partner_summary2adjacency_matrix</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  sparse <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  inputcol <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  outputcol <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inputcol <span class="op">=</span> <span class="st">"pre_id"</span>,</span>
+<span>  outputcol <span class="op">=</span> <span class="st">"post_id"</span>,</span>
 <span>  inputids <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  outputids <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  outputids <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  standardise_input <span class="op">=</span> <span class="cn">T</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -78,6 +79,13 @@ input and output identifiers.</p></dd>
 <dt>inputids, outputids</dt>
 <dd><p>Optional vectors of input/output ids to ensure that
 these are present in the output matrix.</p></dd>
+
+
+<dt>standardise_input</dt>
+<dd><p>whether to standardise the column names/types in the
+input dataframe. The default should work for flywire <code>fafbseg</code> and
+<code>neuprintr</code> input and ensure that we identify appropriate
+<code>pre_id</code>/<code>post_id</code> columns.</p></dd>
 
 </dl></div>
     <div class="section level2">
