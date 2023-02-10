@@ -2,3 +2,4 @@
 
 export(cosine_sim)
 export(partner_summary2adjacency_matrix)
+export(prepare_cosine_matrix)
