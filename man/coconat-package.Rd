@@ -6,7 +6,7 @@
 \alias{coconat-package}
 \title{coconat: Core Connectomics Utilities for the Natverse}
 \description{
-Provides data source agnostic utility functions to support analysis of connectomics data by the Neuroanatomy Toolbox packages and the related natverse suite of packages.
+Provides data source agnostic utility functions to support analysis of connectomics data by the Neuroanatomy Toolbox (natverse) suite of packages.
 }
 \seealso{
 Useful links:

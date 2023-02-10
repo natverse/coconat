@@ -8,8 +8,8 @@ Authors@R: c(person(given = "Gregory",
              email = "jefferis@gmail.com",
              comment = c(ORCID = "0000-0002-0587-9355")))
 Description: Provides data source agnostic utility functions to support 
-    analysis of connectomics data by the Neuroanatomy Toolbox packages and the
-    related natverse suite of packages.
+    analysis of connectomics data by the Neuroanatomy Toolbox (natverse) 
+    suite of packages.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
