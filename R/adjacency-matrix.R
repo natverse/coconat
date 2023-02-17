@@ -35,7 +35,7 @@ partner_summary2adjacency_matrix<- function(x, sparse = TRUE,
   checkmate::assert_choice(outputcol, cx)
   nas=is.na(x[[inputcol]]) | is.na(x[[outputcol]])
   if(any(nas)) {
-    warning("Dropping: ", sum(nas), " rows with missing input/output ids!")
+    warning("Dropping: ", sum(nas), "/", length(nas), " rows due to missing input/output ids!")
     x=x[!nas,,drop=F]
   }
   if(is.null(inputids))
