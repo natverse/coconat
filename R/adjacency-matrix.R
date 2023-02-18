@@ -31,8 +31,17 @@ partner_summary2adjacency_matrix<- function(x, sparse = TRUE,
   if(standardise_input)
     x=standardise_partner_summary(x)
   cx=colnames(x)
-  checkmate::assert_choice(inputcol, cx)
-  checkmate::assert_choice(outputcol, cx)
+  if(is.function(inputids)) {
+    inputcol='igroup'
+    x[[inputcol]]=inputids(x)
+    inputids=NULL
+  } else checkmate::assert_choice(inputcol, cx)
+  if(is.function(outputids)) {
+    outputcol='ogroup'
+    x[[outputcol]]=outputids(x)
+    outputids=NULL
+  } else checkmate::assert_choice(outputcol, cx)
+
   nas=is.na(x[[inputcol]]) | is.na(x[[outputcol]])
   if(any(nas)) {
     warning("Dropping: ",
