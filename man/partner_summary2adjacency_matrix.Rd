@@ -25,7 +25,9 @@ you are making a big one)}
 input and output identifiers.}
 
 \item{inputids, outputids}{Optional vectors of input/output ids to ensure that
-these are present in the output matrix.}
+these are present in the output matrix. Alternatively these may contain a
+function that takes the dataframe \code{x} as input and returns a grouping
+vector. See \bold{details} section for more information.}
 
 \item{standardise_input}{whether to standardise the column names/types in the
 input dataframe. The default should work for flywire \code{fafbseg} and
@@ -38,6 +40,13 @@ A matrix with inputs as rows and outputs (downstream neurons) as
 }
 \description{
 Convert a partner summary table into an adjacency matrix
+}
+\details{
+Passing a function to \code{inputids} and/or \code{outputids} allows
+  partner neurons to be grouped with maximum flexibility. The input to the
+  function will be the dataframe \code{x} (after standardisation if this has
+  been requested). The output must be a single vector which can be
+  interpreted as a factor to group partner neurons.
 }
 \examples{
 \dontrun{

@@ -15,4 +15,11 @@ test_that("partner_summary2adjacency_matrix works", {
 
   expect_equal(Matrix::rowSums(am), bl)
   expect_equal(rowSums(am2), Matrix::rowSums(am))
+
+  expect_equal(
+    partner_summary2adjacency_matrix(da2ds15, inputcol = 'bodyid', outputids = function(x) x$partner),
+    am)
+  expect_equal(
+    partner_summary2adjacency_matrix(da2ds15, inputids = function(x) x$bodyid, outputcol = 'partner'),
+    am)
 })
