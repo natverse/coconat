@@ -78,7 +78,9 @@ input and output identifiers.</p></dd>
 
 <dt>inputids, outputids</dt>
 <dd><p>Optional vectors of input/output ids to ensure that
-these are present in the output matrix.</p></dd>
+these are present in the output matrix. Alternatively these may contain a
+function that takes the dataframe <code>x</code> as input and returns a grouping
+vector. See <b>details</b> section for more information.</p></dd>
 
 
 <dt>standardise_input</dt>
@@ -94,6 +96,14 @@ input dataframe. The default should work for flywire <code>fafbseg</code> and
 
 <p>A matrix with inputs as rows and outputs (downstream neurons) as
   columns</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Passing a function to <code>inputids</code> and/or <code>outputids</code> allows
+  partner neurons to be grouped with maximum flexibility. The input to the
+  function will be the dataframe <code>x</code> (after standardisation if this has
+  been requested). The output must be a single vector which can be
+  interpreted as a factor to group partner neurons.</p>
     </div>
 
     <div class="section level2">
