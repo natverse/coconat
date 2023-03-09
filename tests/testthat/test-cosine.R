@@ -4,5 +4,8 @@ test_that("cosine_sim works", {
   expect_snapshot(cosine_sim(am))
 
   expect_snapshot(pm <- prepare_cosine_matrix(cosine_sim(am, transpose = T)))
+
+  expect_silent(hm <- cosine_heatmap(pm))
+  expect_true(inherits(hm$Colv, "dendrogram"))
 })
 

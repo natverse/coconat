@@ -33,14 +33,17 @@ custom_interactive_heatmap <- function(hm) {
   shiny::shinyApp(ui, server)
 }
 
-# private function to prepare a cosine heatmap using either
+# private function to draw a cosine heatmap using either the basic stats::heatmap
+# or InteractiveComplexHeatmap
+#
 #' @importFrom stats heatmap as.dist hclust
 #' @importFrom grDevices hcl.colors
-prepare_cosine_heatmap <- function(x, labRow, interactive=FALSE,
+cosine_heatmap <- function(x, labRow=rownames(x), interactive=FALSE,
                                    col=hcl.colors(12, "YlOrRd", rev = TRUE),
                                    method=c("ward.D", "single", "complete", "average",
                                             "mcquitty", "median", "centroid", "ward.D2"),
                                    ...) {
+  method=match.arg(method)
   if(interactive) {
     check_package_available('ComplexHeatmap', repo = 'Bio')
     hm <- ComplexHeatmap::Heatmap(
