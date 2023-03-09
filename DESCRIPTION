@@ -18,7 +18,9 @@ Imports:
     bit64,
     checkmate,
     glue,
-    Matrix
+    Matrix,
+    grDevices,
+    stats
 Suggests: 
     covr,
     spelling,
