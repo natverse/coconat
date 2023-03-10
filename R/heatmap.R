@@ -2,7 +2,6 @@ custom_interactive_heatmap <- function(hm) {
   check_package_available('InteractiveComplexHeatmap', repo = 'Bio')
   check_package_available('kableExtra')
   check_package_available('shiny')
-  ht = ComplexHeatmap::draw(hm)
 
   ui = shiny::fluidPage(
     InteractiveComplexHeatmap::InteractiveComplexHeatmapOutput(output_ui = shiny::htmlOutput("info")),
@@ -26,7 +25,7 @@ custom_interactive_heatmap <- function(hm) {
   }
 
   server = function(input, output, session) {
-    InteractiveComplexHeatmap::makeInteractiveComplexHeatmap(input, output, session, ht,
+    InteractiveComplexHeatmap::makeInteractiveComplexHeatmap(input, output, session, hm,
                                                              click_action = click_action, brush_action = brush_action)
   }
 
