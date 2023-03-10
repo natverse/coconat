@@ -1,9 +1,7 @@
 custom_interactive_heatmap <- function(hm) {
   check_package_available('InteractiveComplexHeatmap', repo = 'Bio')
-  check_package_available('ComplexHeatmap', repo = 'Bio')
   check_package_available('kableExtra')
   check_package_available('shiny')
-  ht = ComplexHeatmap::draw(hm)
 
   ui = shiny::fluidPage(
     InteractiveComplexHeatmap::InteractiveComplexHeatmapOutput(output_ui = shiny::htmlOutput("info")),
@@ -27,9 +25,37 @@ custom_interactive_heatmap <- function(hm) {
   }
 
   server = function(input, output, session) {
-    InteractiveComplexHeatmap::makeInteractiveComplexHeatmap(input, output, session, ht,
+    InteractiveComplexHeatmap::makeInteractiveComplexHeatmap(input, output, session, hm,
                                                              click_action = click_action, brush_action = brush_action)
   }
 
   shiny::shinyApp(ui, server)
+}
+
+# private function to draw a cosine heatmap using either the basic stats::heatmap
+# or InteractiveComplexHeatmap
+#
+#' @importFrom stats heatmap as.dist hclust
+#' @importFrom grDevices hcl.colors
+cosine_heatmap <- function(x, labRow=rownames(x), interactive=FALSE,
+                                   col=hcl.colors(12, "YlOrRd", rev = TRUE),
+                                   method=c("ward.D", "single", "complete", "average",
+                                            "mcquitty", "median", "centroid", "ward.D2"),
+                                   ...) {
+  method=match.arg(method)
+  if(interactive) {
+    check_package_available('ComplexHeatmap', repo = 'Bio')
+    hm <- ComplexHeatmap::Heatmap(
+      x,
+      row_labels=labRow,
+      col=col,
+      cluster_rows=function(x,...) hclust(as.dist(1-x), method=method,...),
+      cluster_columns=function(x,...) hclust(as.dist(1-x), method=method,...),
+      ...
+    )
+    custom_interactive_heatmap(hm)
+  } else heatmap(x,
+               distfun = function(x) as.dist(1-x),
+               hclustfun = function(...) hclust(..., method=method),
+               symm = T, keep.dendro = T, labRow=labRow, col=col, ...)
 }

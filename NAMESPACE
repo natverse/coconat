@@ -3,3 +3,7 @@
 export(cosine_sim)
 export(partner_summary2adjacency_matrix)
 export(prepare_cosine_matrix)
+importFrom(grDevices,hcl.colors)
+importFrom(stats,as.dist)
+importFrom(stats,hclust)
+importFrom(stats,heatmap)
