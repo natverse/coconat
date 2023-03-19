@@ -43,7 +43,7 @@ This is a basic example which shows you how to solve a common problem:
 library(coconat)
 # da2ds=neuprintr::neuprint_connection_table('DA2_lPN', details=TRUE, partners='out', conn = hbconn)
 da2ds=readRDS(system.file('sampledata/da2ds.rds', package = 'coconat'))
-da2ds
+head(da2ds)
 ```
 
 ```{r}
