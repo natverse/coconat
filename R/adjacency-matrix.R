@@ -1,6 +1,13 @@
 #' Convert a partner summary table into an adjacency matrix
 #'
-#' @details Passing a function to \code{inputids} and/or \code{outputids} allows
+#' @details The \code{inputcol} and \code{outputcol} arguments can name columns
+#'   containing other values besides the unique numerical identifiers for
+#'   neurons. For example you can refer to a cell type column, thereby
+#'   generating a \emph{grouped} connectivity matrix. This is very useful for
+#'   bringing together neurons with similar connectivity patterns across brain
+#'   hemispheres and individuals.
+#'
+#'   Passing a function to \code{inputids} and/or \code{outputids} allows
 #'   partner neurons to be grouped with maximum flexibility. The input to the
 #'   function will be the dataframe \code{x} (after standardisation if this has
 #'   been requested). The output must be a single vector which can be
@@ -11,7 +18,8 @@
 #' @param sparse Whether to return a sparse matrix (default \code{TRUE} in case
 #'   you are making a big one)
 #' @param inputcol,outputcol Character vector specifying the columns containing
-#'   input and output identifiers.
+#'   input and output identifiers. See \bold{details} section for more
+#'   information.
 #' @param inputids,outputids Optional vectors of input/output ids to ensure that
 #'   these are present in the output matrix. Alternatively these may contain a
 #'   function that takes the dataframe \code{x} as input and returns a grouping
@@ -28,10 +36,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' da2ds=neuprintr::neuprint_connection_table('DA2', details=TRUE, partners='out', threshold=15)
-#' am=partner_summary2adjacency_matrix(da2ds, inputcol = 'partner', outputcol = 'bodyid')
+#' da2ds=neuprintr::neuprint_connection_table('DA2_lPN', details=TRUE, partners='out', threshold=5)
+#' am=partner_summary2adjacency_matrix(da2ds, inputcol = 'bodyid', outputcol = 'partner')
 #' library(Matrix)
-#' image(am, xlab='DA2 PNs', ylab='outputs')
+#' image(am, ylab='DA2 PNs', xlab='outputs')
+#'
+#' amg=partner_summary2adjacency_matrix(da2ds, inputcol = 'bodyid', outputcol = 'type')
+#' image(amg, ylab='DA2 PNs', xlab='output cell types')
 #' }
 partner_summary2adjacency_matrix<- function(x, sparse = TRUE,
                                             inputcol="pre_id", outputcol="post_id",
