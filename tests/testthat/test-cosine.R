@@ -7,5 +7,10 @@ test_that("cosine_sim works", {
 
   expect_silent(hm <- cosine_heatmap(pm))
   expect_true(inherits(hm$Colv, "dendrogram"))
+
+  expect_equal(hm, cosine_heatmap(pm, heatmap=stats::heatmap))
+
+  expect_silent(cl <- cosine_heatmap(pm, heatmap=FALSE))
+  expect_true(inherits(cl, "hclust"))
 })
 

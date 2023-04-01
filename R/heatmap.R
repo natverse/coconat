@@ -38,11 +38,19 @@ custom_interactive_heatmap <- function(hm) {
 #' @importFrom stats heatmap as.dist hclust
 #' @importFrom grDevices hcl.colors
 cosine_heatmap <- function(x, labRow=rownames(x), interactive=FALSE,
-                                   col=hcl.colors(12, "YlOrRd", rev = TRUE),
-                                   method=c("ward.D", "single", "complete", "average",
-                                            "mcquitty", "median", "centroid", "ward.D2"),
+                           heatmap=TRUE, col=hcl.colors(12, "YlOrRd", rev = TRUE),
+                           method=c("ward.D", "single", "complete", "average",
+                                    "mcquitty", "median", "centroid", "ward.D2"),
                                    ...) {
   method=match.arg(method)
+  FUN=stats::heatmap
+  if(!is.logical(heatmap)) {
+    FUN=try(match.fun(heatmap))
+    if(inherits(FUN, 'try-error'))
+      stop("The heatmap argument should either be T/F or define a function in a way that match.fun() understands")
+    heatmap=TRUE
+  }
+
   if(interactive) {
     check_package_available('ComplexHeatmap', repo = 'Bio')
     hm <- ComplexHeatmap::Heatmap(
@@ -54,8 +62,12 @@ cosine_heatmap <- function(x, labRow=rownames(x), interactive=FALSE,
       ...
     )
     custom_interactive_heatmap(hm)
-  } else heatmap(x,
-               distfun = function(x) as.dist(1-x),
-               hclustfun = function(...) hclust(..., method=method),
-               symm = T, keep.dendro = T, labRow=labRow, col=col, ...)
+  } else if(isTRUE(heatmap)) {
+    FUN(x,
+        distfun = function(x) as.dist(1-x),
+        hclustfun = function(...) hclust(..., method=method),
+        symm = T, keep.dendro = T, labRow=labRow, col=col, ...)
+  } else {
+    hclust(as.dist(1-x), method = method, ...)
+  }
 }
