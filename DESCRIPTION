@@ -1,7 +1,7 @@
 Package: coconat
 Type: Package
 Title: Core Connectomics Utilities for the Natverse
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R: c(person(given = "Gregory",
              family = "Jefferis",
              role = c("aut", "cre"),
