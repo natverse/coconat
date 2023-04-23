@@ -28,10 +28,13 @@ Suggests:
     ComplexHeatmap,
     InteractiveComplexHeatmap,
     kableExtra,
-    shiny
+    shiny,
+    knitr,
+    rmarkdown
 Language: en-GB
 Config/testthat/edition: 3
 URL: https://github.com/natverse/coconat,
     http://natverse.org/coconat/
 BugReports: https://github.com/natverse/coconat/issues
 biocViews: Software
+VignetteBuilder: knitr
