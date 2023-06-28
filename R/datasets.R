@@ -8,6 +8,8 @@
 #' @param sex Female, Male, Hermaphrodite or Uncertain
 #' @param species The binomial name for the species
 #' @param age A description of the stage (e.g. adult or L1 or P19)
+#' @param idfun A function or function name to fetch ids based on a query
+#'   specification.
 #' @param metafun A function or function name to fetch metadata about a set of
 #'   ids for this dataset.
 #' @param partnerfun A function or function name to fetch connections for ids in
@@ -22,9 +24,8 @@
 #'
 #' @examples
 register_dataset <- function(name, shortname=NULL, species=NULL,
-                             sex=c("F", "M", "H", "U"),
-                             age=NULL,
-                             metafun=NULL, partnerfun=NULL,
+                             sex=c("F", "M", "H", "U"), age=NULL,
+                             idfun=NULL, metafun=NULL, partnerfun=NULL,
                              namespace='default', ...) {
 
   ns=dataset_namespace(namespace)
@@ -39,12 +40,16 @@ register_dataset <- function(name, shortname=NULL, species=NULL,
 
   sex=match.arg(sex)
 
+  if(is.null(idfun))
+    idfun <- function(ids, integer64=FALSE) {default_id_fun(ids, metafun = metafun, integer64 = integer64)}
+
   ns[[name]]=list(
     name=name,
     shortname=shortname,
     species=species,
     sex=sex,
     age=age,
+    idfun=idfun,
     metafun=metafun,
     partnerfun=partnerfun,
     ...

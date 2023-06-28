@@ -21,3 +21,11 @@ id2char <- function(x) {
   stop("I don't know how to handle input of class:",
        paste(class(x), collapse=','))
 }
+
+# a private function to turn a query
+default_id_fun <- function(ids, metafun, integer64=FALSE) {
+  metafun=match.fun(metafun)
+  ids=metafun(ids)[["id"]]
+  ids=id2char(ids)
+  ids
+}
