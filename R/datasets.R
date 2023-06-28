@@ -19,10 +19,14 @@
 #'   only used for testing purposes.
 #' @param ... Additional named arguments specifying properties of the dataset
 #'
-#' @return
+#' @return No return value. Called for its side effect.
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' # partial example. metafun and partnerfun are pretty important to specify
+#' register_dataset("flywire", shortname='fw', species='Drosophila melanogaster', sex='F', age="adult")
+#' }
 register_dataset <- function(name, shortname=NULL, species=NULL,
                              sex=c("F", "M", "H", "U"), age=NULL,
                              idfun=NULL, metafun=NULL, partnerfun=NULL,
@@ -74,13 +78,17 @@ dataset_namespace <- function(namespace='default') {
 #' Return dataset names either all or those matching a query
 #'
 #' @param query A character vector partially matched against dataset names
-#' @param short Whether to match (and return) short names
-#' @param namespace
+#' @param namespace Optional character vector specifying a namespace used to
+#'   organise datasets (advanced use only).
+#' @param return.short Whether to return the long or short name
+#' @param match Whether the query should match against long or short forms of
+#'   the dataset name.
 #'
-#' @return
+#' @return A character vector of names
 #' @export
 #'
 #' @examples
+#' dataset_names()
 dataset_names <- function(query=NULL, return.short=FALSE, match=c("both", "long", "short"), namespace='default') {
 
   ns=dataset_namespace(namespace)
