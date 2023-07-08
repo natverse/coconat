@@ -20,7 +20,8 @@ Imports:
     glue,
     Matrix,
     grDevices,
-    stats
+    stats,
+    checkmate
 Suggests: 
     covr,
     spelling,
@@ -30,7 +31,8 @@ Suggests:
     kableExtra,
     shiny,
     knitr,
-    rmarkdown
+    rmarkdown,
+    dendroextras
 Language: en-GB
 Config/testthat/edition: 3
 URL: https://github.com/natverse/coconat,
