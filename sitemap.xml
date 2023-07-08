@@ -28,6 +28,9 @@
     <loc>https://natverse.org/coconat/reference/cosine_sim.html</loc>
   </url>
   <url>
+    <loc>https://natverse.org/coconat/reference/dataset_names.html</loc>
+  </url>
+  <url>
     <loc>https://natverse.org/coconat/reference/id2char.html</loc>
   </url>
   <url>
@@ -38,5 +41,8 @@
   </url>
   <url>
     <loc>https://natverse.org/coconat/reference/prepare_cosine_matrix.html</loc>
+  </url>
+  <url>
+    <loc>https://natverse.org/coconat/reference/register_dataset.html</loc>
   </url>
 </urlset>
