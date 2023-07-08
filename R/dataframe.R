@@ -32,6 +32,7 @@ add_cluster_info <- function(df, dend, h=NULL, k=NULL, colnames=NULL,
   if(drop_group_col) k=1
 
   check_package_available('dendroextras')
+  check_package_available('dplyr')
   gg=dendroextras::slice(dend, h=h, k=k)
 
   # some juggling as we need ids to be character for matching purposes but we
@@ -50,7 +51,7 @@ add_cluster_info <- function(df, dend, h=NULL, k=NULL, colnames=NULL,
   if(drop_group_col)
     ggdf=ggdf[-3L]
 
-  res=merge(df, ggdf, by=idcol, all.x=TRUE, sort=FALSE)
+  res=dplyr::left_join(df, ggdf, by=idcol)
   res[[idcol]]=saved_ids
   res
 }

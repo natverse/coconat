@@ -31,6 +31,7 @@ Suggests:
     shiny,
     knitr,
     rmarkdown,
+    dplyr,
     dendroextras
 Language: en-GB
 Config/testthat/edition: 3
