@@ -1,7 +1,7 @@
 #' Add dataframe columns detailing ordering and groups from a dendrogram
 #'
-#' @param df A dataframe e.g. as returned by cf_meta
-#' @param dend A \code{dendrogram} or \code{hclust} object
+#' @param df A dataframe e.g. as returned by \code{coconatfly::cf_meta}
+#' @param dend A \code{\link{dendrogram}} or \code{\link{hclust}} object
 #' @param h A height to cut the dendrogram
 #' @param k A number of clusters to cut the dendrogram
 #' @param colnames The names of the two new columns

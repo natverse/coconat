@@ -14,9 +14,9 @@ add_cluster_info(
 )
 }
 \arguments{
-\item{df}{A dataframe e.g. as returned by cf_meta}
+\item{df}{A dataframe e.g. as returned by \code{coconatfly::cf_meta}}
 
-\item{dend}{A \code{dendrogram} or \code{hclust} object}
+\item{dend}{A \code{\link{dendrogram}} or \code{\link{hclust}} object}
 
 \item{h}{A height to cut the dendrogram}
 
