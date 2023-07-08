@@ -16,7 +16,12 @@ connectome analysis.
 It is intended to have a mix of end-user functionality and functions
 that are principally intended as building blocks for more specialised
 packages such as <https://natverse.org/neuprintr/> or
-<https://natverse.org/fafbseg/>
+<https://natverse.org/fafbseg/>.
+
+It is also a key building block for the <https://natverse.org/coconat>
+package, which provides a small number of powerful functions for
+comparative connectomics analysis of multiple dense reconstructions of
+drosophila brain and VNC data.
 
 ## Installation
 
