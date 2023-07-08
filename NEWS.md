@@ -1,4 +1,9 @@
-# coconat (development version)
+# coconat 0.1.2
+
+* Add `add_cluster_info()` by @jefferis in https://github.com/natverse/coconat/pull/5
+* give `cosine_heatmap()` a `heatmap` argument
+* work on enabling a plugin architecture for registering datasets `dataset_names()`
+**Full Changelog**: https://github.com/natverse/coconat/compare/v0.1.1...v0.1.2
 
 # coconat 0.1.1
 
