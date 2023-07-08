@@ -10,7 +10,7 @@ add_cluster_info(
   h = NULL,
   k = NULL,
   colnames = NULL,
-  idcol = c("id", "root_id", "bodyid")
+  idcol = c("key", "id", "root_id", "bodyid")
 )
 }
 \arguments{

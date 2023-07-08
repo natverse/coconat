@@ -14,7 +14,7 @@
 #'   \code{dendid} and e.g. \code{group_h2}.
 #' @export
 add_cluster_info <- function(df, dend, h=NULL, k=NULL, colnames=NULL,
-                             idcol=c('id', 'root_id', 'bodyid')) {
+                             idcol=c('key','id', 'root_id', 'bodyid')) {
   stopifnot(inherits(dend, 'hclust') || inherits(dend, 'dendrogram'))
   stopifnot(inherits(df, 'data.frame'))
   if(missing(idcol)) {
