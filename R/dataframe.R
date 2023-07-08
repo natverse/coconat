@@ -50,7 +50,7 @@ add_cluster_info <- function(df, dend, h=NULL, k=NULL, colnames=NULL,
   if(drop_group_col)
     ggdf=ggdf[-3L]
 
-  res=dplyr::left_join(df, ggdf, by=idcol)
+  res=merge(df, ggdf, by=idcol, all.x=TRUE, sort=FALSE)
   res[[idcol]]=saved_ids
   res
 }
