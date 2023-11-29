@@ -31,4 +31,7 @@ test_that("multiplication works", {
 0.142857142857143, 0.142857142857143, 0.142857142857143, 0.142857142857143,
 1, 0.5, 0.5, 0.125, 0.25, 0.25, 0.125, 0.125, 0.125), factors = list())
   expect_equal(colScaleM(A), csA)
+
+  expect_equal(geomScaleM(A),
+    sqrt(colScaleM(A)*rowScaleM(A)))
 })

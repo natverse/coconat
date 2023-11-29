@@ -66,5 +66,9 @@ rowScaleM <- function(A, na.rm=TRUE) {
 #' @rdname colScaleM
 #' @description sqrt of both column and row normalisation
 geomScaleM <- function(A, na.rm=TRUE) {
-  sqrt(colScaleM(A, na.rm=na.rm)*rowScaleM(A, na.rm=na.rm))
+  sf1=sqrt(1/Matrix::rowSums(A))
+  if(na.rm) sf1[!is.finite(sf1)]=0
+  sf2=sqrt(1/Matrix::colSums(A))
+  if(na.rm) sf2[!is.finite(sf2)]=0
+  Matrix::dimScale(A, d1 = sf1, d2 = sf2)
 }
