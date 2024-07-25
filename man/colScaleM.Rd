@@ -39,11 +39,11 @@ Conventionally in connectivity matrices, rows are upstream input
   their base R cousins (e.g. \code{scale}). As an example, normalising a 4x4k
   subset of VNC connectivity data took \itemize{
 
-  \item colScaleM sparse 3.5ms
+  \item \code{colScaleM} sparse 3.5ms
 
-  \item colScaleM dense 1460ms
+  \item \code{colScaleM} dense 1460ms
 
-  \item scale dense 365ms
+  \item \code{scale} dense 365ms
 
   }
 
