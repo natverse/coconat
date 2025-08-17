@@ -23,7 +23,12 @@
 #'   be \emph{much} faster and for small ones, both methods will be fast anyway.
 #'
 #'   Note also that these functions were originally called \code{colScale} etc
-#'   but then the \code{Matrix} package added functions of the same name.
+#'   but then the \code{\link[Matrix]{Matrix}} package added functions of the
+#'   same name. The functions in this package differ in two respects from the
+#'   \code{Matrix::\link[Matrix:colScale]{colScale,rowScale}} functions. First
+#'   they calculate the required row or column sums to perform the scaling.
+#'   Second, they handle the inevitable zero sum rows or columns via the default
+#'   \code{na.rm} argument.
 #'
 #' @param A a sparse (or dense) matrix
 #' @param na.rm when \code{T}, the default, converts any NA values (usually
