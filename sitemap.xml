@@ -1,51 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://natverse.org/coconat/404.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/articles/identifiers-and-datasets.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/index.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/reference/add_cluster_info.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/reference/coconat-package.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/reference/cosine_sim.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/reference/dataset_names.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/reference/id2char.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/reference/partner_summary2adjacency_matrix.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/reference/prepare_cosine_matrix.html</loc>
-  </url>
-  <url>
-    <loc>https://natverse.org/coconat/reference/register_dataset.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://natverse.org/coconat/404.html</loc></url>
+<url><loc>https://natverse.org/coconat/LICENSE.html</loc></url>
+<url><loc>https://natverse.org/coconat/articles/identifiers-and-datasets.html</loc></url>
+<url><loc>https://natverse.org/coconat/articles/index.html</loc></url>
+<url><loc>https://natverse.org/coconat/authors.html</loc></url>
+<url><loc>https://natverse.org/coconat/index.html</loc></url>
+<url><loc>https://natverse.org/coconat/news/index.html</loc></url>
+<url><loc>https://natverse.org/coconat/reference/add_cluster_info.html</loc></url>
+<url><loc>https://natverse.org/coconat/reference/coconat-package.html</loc></url>
+<url><loc>https://natverse.org/coconat/reference/cosine_sim.html</loc></url>
+<url><loc>https://natverse.org/coconat/reference/dataset_names.html</loc></url>
+<url><loc>https://natverse.org/coconat/reference/id2char.html</loc></url>
+<url><loc>https://natverse.org/coconat/reference/index.html</loc></url>
+<url><loc>https://natverse.org/coconat/reference/partner_summary2adjacency_matrix.html</loc></url>
+<url><loc>https://natverse.org/coconat/reference/prepare_cosine_matrix.html</loc></url>
+<url><loc>https://natverse.org/coconat/reference/register_dataset.html</loc></url>
 </urlset>
+
