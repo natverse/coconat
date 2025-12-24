@@ -1,6 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- devtools::build_readme() -->
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/natverse/coconat/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/natverse/coconat/actions/workflows/R-CMD-check.yaml)
@@ -18,10 +20,10 @@ that are principally intended as building blocks for more specialised
 packages such as <https://natverse.org/neuprintr/> or
 <https://natverse.org/fafbseg/>.
 
-It is also a key building block for the <https://natverse.org/coconat>
-package, which provides a small number of powerful functions for
-comparative connectomics analysis of multiple dense reconstructions of
-drosophila brain and VNC data.
+It is also a key building block for the
+[https://natverse.org/coconatfly](coconatfly) package, which provides a
+small number of powerful functions for comparative connectomics analysis
+of dense reconstructions of *Drosophila* brain and VNC data.
 
 ## Installation
 
