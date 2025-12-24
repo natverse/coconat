@@ -1,0 +1,109 @@
+The goal of *coconat* is to provide dataset agnostic support for
+connectome analysis.
+
+It is intended to have a mix of end-user functionality and functions
+that are principally intended as building blocks for more specialised
+packages such as <https://natverse.org/neuprintr/> or
+<https://natverse.org/fafbseg/>.
+
+It is also a key building block for the
+[https://natverse.org/coconatfly](https://natverse.org/coconat/coconatfly)
+package, which provides a small number of powerful functions for
+comparative connectomics analysis of dense reconstructions of
+*Drosophila* brain and VNC data.
+
+## Installation
+
+You can install the development version of coconat from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("natverse/coconat")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+``` r
+library(coconat)
+# da2ds=neuprintr::neuprint_connection_table('DA2_lPN', details=TRUE, partners='out', conn = hbconn)
+da2ds=readRDS(system.file('sampledata/da2ds.rds', package = 'coconat'))
+head(da2ds)
+#>       bodyid    partner prepost weight      name    type
+#> 1 1796817841 5812982273       1     28   KCg-m_R   KCg-m
+#> 2 1796817841  574377845       1     28 LHAV3f1_R LHAV3f1
+#> 3 1797505019 1202410042       1     27   KCg-m_R   KCg-m
+#> 4 1796818119  632402333       1     26   KCg-m_R   KCg-m
+#> 5 1827516355 5813055865       1     26 LHAD1f2_R LHAD1f2
+#> 6 1796818119 5813080766       1     24   KCg-m_R   KCg-m
+```
+
+``` r
+library(Matrix)
+am=partner_summary2adjacency_matrix(da2ds, inputcol = 'bodyid', outputcol = 'partner')
+image(am)
+```
+
+![](reference/figures/README-unnamed-chunk-2-1.png)
+
+``` r
+
+am2=partner_summary2adjacency_matrix(subset(da2ds, weight>=15), 
+                                     inputcol = 'bodyid', outputcol = 'partner')
+image(am2)
+```
+
+![](reference/figures/README-unnamed-chunk-3-1.png) Now we can also
+cosine cluster
+
+We can do this for the inputs (the 5 PNs should look much the same)
+
+``` r
+heatmap(cosine_sim(am, transpose = T))
+```
+
+![](reference/figures/README-unnamed-chunk-4-1.png)
+
+Or the outputs
+
+``` r
+heatmap(cosine_sim(am))
+```
+
+![](reference/figures/README-unnamed-chunk-5-1.png)
+
+But it would of course be more useful if we did this based on a richer
+set of inputs
+
+# Package index
+
+## All functions
+
+- [`add_cluster_info()`](https://natverse.org/coconat/reference/add_cluster_info.md)
+  : Add dataframe columns detailing ordering and groups from a
+  dendrogram
+- [`colScaleM()`](https://natverse.org/coconat/reference/colScaleM.md)
+  [`rowScaleM()`](https://natverse.org/coconat/reference/colScaleM.md)
+  [`geomScaleM()`](https://natverse.org/coconat/reference/colScaleM.md)
+  : Efficient column and row scaling for sparse matrices
+- [`cosine_sim()`](https://natverse.org/coconat/reference/cosine_sim.md)
+  : Efficient calculation of cosine similarity for sparse or dense
+  matrices
+- [`dataset_names()`](https://natverse.org/coconat/reference/dataset_names.md)
+  : Return dataset names either all or those matching a query
+- [`id2char()`](https://natverse.org/coconat/reference/id2char.md) :
+  Convert any id into a character vector
+- [`partner_summary2adjacency_matrix()`](https://natverse.org/coconat/reference/partner_summary2adjacency_matrix.md)
+  : Convert a partner summary table into an adjacency matrix
+- [`prepare_cosine_matrix()`](https://natverse.org/coconat/reference/prepare_cosine_matrix.md)
+  : Cosine matrix utility functions
+- [`register_dataset()`](https://natverse.org/coconat/reference/register_dataset.md)
+  : Register a dataset for use with coconat and related packages
+
+# Articles
+
+### All vignettes
+
+- [identifiers-and-datasets](https://natverse.org/coconat/articles/identifiers-and-datasets.md):
