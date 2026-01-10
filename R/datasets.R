@@ -47,6 +47,7 @@ register_dataset <- function(name, shortname=NULL, species=NULL,
   if(is.null(idfun))
     idfun <- function(ids, integer64=FALSE) {default_id_fun(ids, metafun = metafun, integer64 = integer64)}
 
+  mf <- match.call(expand.dots = FALSE)
   ns[[name]]=list(
     name=name,
     shortname=shortname,
@@ -56,6 +57,7 @@ register_dataset <- function(name, shortname=NULL, species=NULL,
     idfun=idfun,
     metafun=metafun,
     partnerfun=partnerfun,
+    call=mf,
     ...
   )
   invisible()
