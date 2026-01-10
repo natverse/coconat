@@ -10,14 +10,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/natverse/coconat/blob/master/DESCRIPTION)
 
-Jefferis G (2025). *coconat: Core Connectomics Utilities for the
-Natverse*. R package version 0.1.2,
+Jefferis G (2026). *coconat: Core Connectomics Utilities for the
+Natverse*. R package version 0.1.2.9000,
 <https://github.com/natverse/coconat>.
 
     @Manual{,
       title = {coconat: Core Connectomics Utilities for the Natverse},
       author = {Gregory Jefferis},
-      year = {2025},
-      note = {R package version 0.1.2},
+      year = {2026},
+      note = {R package version 0.1.2.9000},
       url = {https://github.com/natverse/coconat},
     }
