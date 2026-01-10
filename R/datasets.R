@@ -127,3 +127,17 @@ dataset_shortnames <- function(namespace='default') {
   if(length(l)==0) character() else unlist(l)
 }
 
+dataset_summaries <- function(namespace='default') {
+  dns=dataset_names(namespace = namespace)
+  dd=sapply(dns, simplify = F, function(dn) {
+    dd=dataset_details(dn, namespace = namespace)
+    ndd=names(dd)[sapply(dd, is.atomic)]
+    cns=names(dd$call)[-1]
+    cvs=as.character(dd$call)[-1]
+    l=as.list(cvs)
+    names(l)=cns
+    ddsel=c(dd[ndd], l[setdiff(names(l), ndd)])
+    as.data.frame(ddsel)
+  })
+  dplyr::bind_rows(dd)
+}
