@@ -128,6 +128,7 @@ dataset_shortnames <- function(namespace='default') {
 }
 
 dataset_summaries <- function(namespace='default') {
+  check_package_available("dplyr")
   dns=dataset_names(namespace = namespace)
   dd=sapply(dns, simplify = F, function(dn) {
     dd=dataset_details(dn, namespace = namespace)
