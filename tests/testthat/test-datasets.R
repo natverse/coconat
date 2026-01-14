@@ -7,5 +7,9 @@ test_that("dataset support", {
   expect_equal(dataset_names("h", namespace = 'testthat'), "hemibrain")
 
   expect_equal(dataset_names("h", namespace = 'testthat', return.short = T), "hb")
+
+  expect_silent(register_dataset('flywirex', shortname = 'fx', namespace = 'testthat', inherits = 'flywire'))
+  expect_equal(dataset_details('flywirex', namespace = 'testthat')$sex, 'F')
+
   remove_namespace('testthat')
 })
