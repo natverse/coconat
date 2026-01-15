@@ -16,11 +16,18 @@
 #'   this dataset.
 #' @param namespace Expert use only. Can be used to define separate namespaces
 #'   across which dataset names and keys do not have to be unique. Currently
-#'   only used for testing purposes.
+#'   only used by the coconatfly package.
+#' @param inherits The name of a previously registered dataset. See details.
 #' @param ... Additional named arguments specifying properties of the dataset
 #'
 #' @return No return value. Called for its side effect.
 #' @export
+#' @details You can use the \code{inherits} argument to simplify adding an
+#' additional handler for an existing dataset. For example imagine you have some
+#' of your own annotations that you would like to supplement publicly released
+#' ones for the banc dataset. You can register a new dataset \code{bancx} and
+#' inherit from the \code{banc} definition and only replace the \code{metafun}
+#' argument keeping everything else the same.
 #'
 #' @examples
 #' \dontrun{
@@ -30,7 +37,7 @@
 register_dataset <- function(name, shortname=NULL, species=NULL,
                              sex=c("F", "M", "H", "U"), age=NULL,
                              idfun=NULL, metafun=NULL, partnerfun=NULL,
-                             namespace='default', ...) {
+                             namespace='default', inherits=NULL, ...) {
 
   ns=dataset_namespace(namespace)
   nn=ls(ns)
@@ -38,6 +45,14 @@ register_dataset <- function(name, shortname=NULL, species=NULL,
     warning("Dataset with name: ", name, " already registered. Overwriting!")
     ns[[name]]=NULL
   }
+
+  baselist <- if(!is.null(inherits)) {
+    if(!inherits %in% nn)
+      stop("You have asked to inherit from a non-existent dataset:",
+           inherits,
+           "\nNB hard-coded coconatfly datasets do not yet support this mechanism.")
+    dataset_details(inherits, namespace = namespace)
+  } else NULL
 
   if(is.null(shortname))
     shortname=unname(abbreviate(name, minlength = 2))
@@ -48,7 +63,7 @@ register_dataset <- function(name, shortname=NULL, species=NULL,
     idfun <- function(ids, integer64=FALSE) {default_id_fun(ids, metafun = metafun, integer64 = integer64)}
 
   mf <- match.call(expand.dots = FALSE)
-  ns[[name]]=list(
+  newlist <- list(
     name=name,
     shortname=shortname,
     species=species,
@@ -60,6 +75,14 @@ register_dataset <- function(name, shortname=NULL, species=NULL,
     call=mf,
     ...
   )
+  if(!is.null(baselist)) {
+    newlist=newlist[!sapply(newlist, is.null)]
+    baselist[names(newlist)]=newlist
+    newlist <- baselist
+
+  }
+  ns[[name]]=newlist
+
   invisible()
 }
 
