@@ -53,6 +53,7 @@
 <span>  metafun <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  partnerfun <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  namespace <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  inherits <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -100,7 +101,11 @@ this dataset.</p></dd>
 <dt id="arg-namespace">namespace<a class="anchor" aria-label="anchor" href="#arg-namespace"></a></dt>
 <dd><p>Expert use only. Can be used to define separate namespaces
 across which dataset names and keys do not have to be unique. Currently
-only used for testing purposes.</p></dd>
+only used by the coconatfly package.</p></dd>
+
+
+<dt id="arg-inherits">inherits<a class="anchor" aria-label="anchor" href="#arg-inherits"></a></dt>
+<dd><p>The name of a previously registered dataset. See details.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -110,6 +115,15 @@ only used for testing purposes.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>No return value. Called for its side effect.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>You can use the <code>inherits</code> argument to simplify adding an
+additional handler for an existing dataset. For example imagine you have some
+of your own annotations that you would like to supplement publicly released
+ones for the banc dataset. You can register a new dataset <code>bancx</code> and
+inherit from the <code>banc</code> definition and only replace the <code>metafun</code>
+argument keeping everything else the same.</p>
     </div>
 
     <div class="section level2">

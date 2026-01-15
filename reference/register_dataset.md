@@ -15,6 +15,7 @@ register_dataset(
   metafun = NULL,
   partnerfun = NULL,
   namespace = "default",
+  inherits = NULL,
   ...
 )
 ```
@@ -61,7 +62,11 @@ register_dataset(
 
   Expert use only. Can be used to define separate namespaces across
   which dataset names and keys do not have to be unique. Currently only
-  used for testing purposes.
+  used by the coconatfly package.
+
+- inherits:
+
+  The name of a previously registered dataset. See details.
 
 - ...:
 
@@ -70,6 +75,15 @@ register_dataset(
 ## Value
 
 No return value. Called for its side effect.
+
+## Details
+
+You can use the `inherits` argument to simplify adding an additional
+handler for an existing dataset. For example imagine you have some of
+your own annotations that you would like to supplement publicly released
+ones for the banc dataset. You can register a new dataset `bancx` and
+inherit from the `banc` definition and only replace the `metafun`
+argument keeping everything else the same.
 
 ## Examples
 
