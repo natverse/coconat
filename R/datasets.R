@@ -57,6 +57,9 @@ register_dataset <- function(name, shortname=NULL, species=NULL,
   if(is.null(shortname))
     shortname=unname(abbreviate(name, minlength = 2))
 
+  if(missing(sex) && is.null(baselist[['sex']]))
+    warning("No sex specified for dataset: ", name,
+            ". Defaulting to 'F'. Please set sex explicitly.")
   sex=match.arg(sex)
 
   if(is.null(idfun))
