@@ -11,5 +11,13 @@ test_that("dataset support", {
   expect_silent(register_dataset('flywirex', shortname = 'fx', namespace = 'testthat', inherits = 'flywire'))
   expect_equal(dataset_details('flywirex', namespace = 'testthat')$sex, 'F')
 
+  # warning when sex not specified
+  expect_warning(
+    register_dataset('nosex', shortname = 'ns', namespace = 'testthat'),
+    "No sex specified"
+  )
+  # still defaults to F
+  expect_equal(dataset_details('nosex', namespace = 'testthat')$sex, 'F')
+
   remove_namespace('testthat')
 })
