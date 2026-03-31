@@ -13,12 +13,13 @@ Description: Provides data source agnostic utility functions to support
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
-Imports: 
+RoxygenNote: 7.3.3
+Imports:
     bit64,
     checkmate,
     glue,
     Matrix (>= 1.5-3),
+    methods,
     grDevices,
     stats
 Suggests: 
