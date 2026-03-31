@@ -34,21 +34,22 @@ cosine_sim <- function(x, sparse=FALSE, transpose=FALSE) {
 }
 
 
-#' Cosine matrix utility functions
+#' Prepare a similarity matrix from input/output connectivity
 #'
 #' @description These functions are intended for use by package authors rather
-#'   than end users.
+#'   than end users. \code{prepare_cosine_matrix} is an alias for
+#'   \code{prepare_similarity_matrix} retained for backwards compatibility.
 #'
 #' @param x A matrix or a named list of input/output matrices
 #' @param partners Whether to select input or output matrices when both are
 #'   available
-#' @param action Whether to zero out or drop any NA values in the cosine matrix
-#'   (these may be present when some columns have no entries)
+#' @param action Whether to zero out or drop any NA values in the similarity
+#'   matrix (these may be present when some columns have no entries)
 #'
 #' @return A matrix. When both inputs and outputs are used these will be
 #'   weighted by the total number of input and output synapses.
 #' @export
-prepare_cosine_matrix <- function(x, partners=c("inputs", "outputs"), action=c("zero", 'drop')) {
+prepare_similarity_matrix <- function(x, partners=c("inputs", "outputs"), action=c("zero", 'drop')) {
   x <- fix_nas(x, action=action)
   if(is.list(x)) {
     x <- if(length(partners)==2) {
@@ -61,6 +62,13 @@ prepare_cosine_matrix <- function(x, partners=c("inputs", "outputs"), action=c("
       x$cin
   }
   x
+}
+
+#' @rdname prepare_similarity_matrix
+#' @usage prepare_cosine_matrix(x, partners = c("inputs", "outputs"), action = c("zero", "drop"))
+#' @export
+prepare_cosine_matrix <- function(x, partners=c("inputs", "outputs"), action=c("zero", 'drop')) {
+  prepare_similarity_matrix(x, partners=partners, action=action)
 }
 
 fix_nas <- function(x, action=c("zero", 'drop')) {
