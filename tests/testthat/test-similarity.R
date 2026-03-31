@@ -192,6 +192,81 @@ test_that("jaccard_sim handles edge cases", {
   expect_error(jaccard_sim(data.frame(a = 1:3)), "matrix")
 })
 
+test_that("tanimoto_sim matches naive implementation", {
+  naive_tanimoto <- function(x) {
+    n <- ncol(x)
+    sim <- matrix(0, n, n, dimnames = list(colnames(x), colnames(x)))
+    for (i in seq_len(n)) {
+      for (j in seq(i, n)) {
+        a <- x[, i]; b <- x[, j]
+        d <- sum(a * b)
+        denom <- sum(a^2) + sum(b^2) - d
+        sim[i, j] <- sim[j, i] <- if (denom == 0) 0 else d / denom
+      }
+    }
+    diag(sim) <- 1
+    sim
+  }
+
+  da2ds15 <- readRDS(system.file('sampledata/da2ds15.rds', package = 'coconat'))
+  am <- partner_summary2adjacency_matrix(da2ds15, inputcol = 'partner', outputcol = 'bodyid')
+  expect_equal(tanimoto_sim(am), naive_tanimoto(as.matrix(am)))
+})
+
+test_that("tanimoto_sim hand-computed values are correct", {
+  m <- matrix(c(4,0,1, 2,3,1, 0,3,0), nrow = 3, ncol = 3)
+  colnames(m) <- c("n1", "n2", "n3")
+
+  # T(n1,n2) = dot(n1,n2) / (||n1||^2 + ||n2||^2 - dot(n1,n2))
+  # dot = 4*2 + 0*3 + 1*1 = 9
+  # ||n1||^2 = 16+0+1 = 17, ||n2||^2 = 4+9+1 = 14
+  # T = 9 / (17 + 14 - 9) = 9/22
+  ts <- tanimoto_sim(m)
+  expect_equal(ts["n1","n2"], 9/22)
+  expect_equal(ts["n1","n3"], 0)  # disjoint
+  # dot(n2,n3) = 0+9+0 = 9, ||n3||^2 = 9
+  # T = 9 / (14 + 9 - 9) = 9/14
+  expect_equal(ts["n2","n3"], 9/14)
+})
+
+test_that("tanimoto_sim equals binary jaccard on 0/1 data", {
+  m <- Matrix::Matrix(c(1,0,1,0, 0,1,1,0, 1,1,0,1), nrow = 4, ncol = 3, sparse = TRUE)
+  colnames(m) <- c("a", "b", "c")
+  expect_equal(tanimoto_sim(m), jaccard_sim(m))
+})
+
+test_that("tanimoto_sim handles edge cases", {
+  # Single column
+  m1 <- Matrix::Matrix(c(1, 0, 3), ncol = 1, sparse = TRUE)
+  colnames(m1) <- "a"
+  expect_equal(tanimoto_sim(m1), matrix(1, 1, 1, dimnames = list("a", "a")))
+
+  # All-zero columns
+  m2 <- Matrix::Matrix(0, nrow = 3, ncol = 2, sparse = TRUE)
+  colnames(m2) <- c("a", "b")
+  t2 <- tanimoto_sim(m2)
+  expect_true(all(diag(t2) == 1))
+  expect_equal(t2["a", "b"], 0)
+
+  # Rejects non-matrix input
+  expect_error(tanimoto_sim(1:10), "matrix")
+})
+
+test_that("tanimoto_sim sparse and transpose parameters work", {
+  m <- Matrix::Matrix(c(4,0,1, 2,3,1, 0,3,0), nrow = 3, ncol = 3, sparse = TRUE)
+  colnames(m) <- c("n1", "n2", "n3")
+  rownames(m) <- c("p1", "p2", "p3")
+
+  ts <- tanimoto_sim(m, sparse = TRUE)
+  expect_true(inherits(ts, "Matrix"))
+  expect_equal(as.matrix(ts), tanimoto_sim(m))
+
+  tt <- tanimoto_sim(m, transpose = TRUE)
+  expect_equal(dim(tt), c(3L, 3L))
+  expect_equal(rownames(tt), c("p1", "p2", "p3"))
+  expect_equal(tt, tanimoto_sim(Matrix::t(m)))
+})
+
 test_that("connectivity_similarity dispatches correctly", {
   da2ds15=readRDS(system.file('sampledata/da2ds15.rds', package = 'coconat'))
   am=partner_summary2adjacency_matrix(da2ds15, inputcol = 'partner', outputcol = 'bodyid')
@@ -200,6 +275,7 @@ test_that("connectivity_similarity dispatches correctly", {
   expect_equal(connectivity_similarity(am, metric = "jaccard"), jaccard_sim(am))
   expect_equal(connectivity_similarity(am, metric = "weighted_jaccard"),
                jaccard_sim(am, weighted = TRUE))
+  expect_equal(connectivity_similarity(am, metric = "tanimoto"), tanimoto_sim(am))
 })
 
 test_that("prepare_similarity_matrix is an alias for prepare_cosine_matrix", {

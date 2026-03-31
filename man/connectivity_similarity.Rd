@@ -6,7 +6,7 @@
 \usage{
 connectivity_similarity(
   x,
-  metric = c("cosine", "jaccard", "weighted_jaccard"),
+  metric = c("cosine", "jaccard", "weighted_jaccard", "tanimoto"),
   sparse = FALSE,
   transpose = FALSE
 )
@@ -16,7 +16,8 @@ connectivity_similarity(
 \code{\link{partner_summary2adjacency_matrix}}}
 
 \item{metric}{Character specifying the similarity metric. One of
-\code{"cosine"}, \code{"jaccard"}, or \code{"weighted_jaccard"}.}
+\code{"cosine"}, \code{"jaccard"}, \code{"weighted_jaccard"}, or
+\code{"tanimoto"}.}
 
 \item{sparse}{Whether to return a sparse matrix (default \code{FALSE})}
 
@@ -39,7 +40,9 @@ am=partner_summary2adjacency_matrix(da2ds15, inputcol = 'partner', outputcol = '
 connectivity_similarity(am, metric="cosine")
 connectivity_similarity(am, metric="jaccard")
 connectivity_similarity(am, metric="weighted_jaccard")
+connectivity_similarity(am, metric="tanimoto")
 }
 \seealso{
-\code{\link{cosine_sim}}, \code{\link{jaccard_sim}}
+\code{\link{cosine_sim}}, \code{\link{jaccard_sim}},
+  \code{\link{tanimoto_sim}}
 }

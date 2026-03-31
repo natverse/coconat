@@ -9,27 +9,31 @@
 #' @param x A (sparse) matrix, typically an adjacency matrix from
 #'   \code{\link{partner_summary2adjacency_matrix}}
 #' @param metric Character specifying the similarity metric. One of
-#'   \code{"cosine"}, \code{"jaccard"}, or \code{"weighted_jaccard"}.
+#'   \code{"cosine"}, \code{"jaccard"}, \code{"weighted_jaccard"}, or
+#'   \code{"tanimoto"}.
 #' @param sparse Whether to return a sparse matrix (default \code{FALSE})
 #' @param transpose When \code{FALSE} (the default) calculates similarity
 #'   between columns. When \code{TRUE} calculates similarity between rows.
 #'
 #' @return A square similarity matrix with values in \code{[0,1]}.
 #' @export
-#' @seealso \code{\link{cosine_sim}}, \code{\link{jaccard_sim}}
+#' @seealso \code{\link{cosine_sim}}, \code{\link{jaccard_sim}},
+#'   \code{\link{tanimoto_sim}}
 #' @examples
 #' da2ds15=readRDS(system.file('sampledata/da2ds15.rds', package = 'coconat'))
 #' am=partner_summary2adjacency_matrix(da2ds15, inputcol = 'partner', outputcol = 'bodyid')
 #' connectivity_similarity(am, metric="cosine")
 #' connectivity_similarity(am, metric="jaccard")
 #' connectivity_similarity(am, metric="weighted_jaccard")
-connectivity_similarity <- function(x, metric = c("cosine", "jaccard", "weighted_jaccard"),
+#' connectivity_similarity(am, metric="tanimoto")
+connectivity_similarity <- function(x, metric = c("cosine", "jaccard", "weighted_jaccard", "tanimoto"),
                                     sparse = FALSE, transpose = FALSE) {
   metric <- match.arg(metric)
   switch(metric,
     cosine = cosine_sim(x, sparse = sparse, transpose = transpose),
     jaccard = jaccard_sim(x, weighted = FALSE, sparse = sparse, transpose = transpose),
-    weighted_jaccard = jaccard_sim(x, weighted = TRUE, sparse = sparse, transpose = transpose)
+    weighted_jaccard = jaccard_sim(x, weighted = TRUE, sparse = sparse, transpose = transpose),
+    tanimoto = tanimoto_sim(x, sparse = sparse, transpose = transpose)
   )
 }
 
@@ -119,6 +123,57 @@ jaccard_sim <- function(x, weighted = FALSE, sparse = FALSE, transpose = FALSE) 
       sim <- Matrix::Matrix(sim, sparse = TRUE)
     }
   }
+
+  if (sparse) sim else as.matrix(sim)
+}
+
+
+#' Tanimoto (extended Jaccard) similarity for sparse or dense matrices
+#'
+#' @description Computes pairwise Tanimoto similarity between columns (or rows)
+#'   of a matrix. Also known as the extended Jaccard coefficient, defined as:
+#'   \code{dot(a,b) / (||a||^2 + ||b||^2 - dot(a,b))}. On binary data this
+#'   reduces to the standard Jaccard index. Computed via a single
+#'   \code{crossprod} call, so performance is comparable to \code{cosine_sim}.
+#'
+#' @param x A data matrix suitable for clustering (non-negative values expected)
+#' @param sparse Whether to return a sparse matrix (default \code{FALSE})
+#' @param transpose When \code{FALSE} (the default) calculates similarity
+#'   between columns. When \code{TRUE} calculates similarity between rows.
+#'
+#' @return A square similarity matrix with values in \code{[0,1]}.
+#' @importFrom methods as
+#' @export
+#' @seealso \code{\link{jaccard_sim}}, \code{\link{cosine_sim}},
+#'   \code{\link{connectivity_similarity}}
+#' @examples
+#' da2ds15=readRDS(system.file('sampledata/da2ds15.rds', package = 'coconat'))
+#' am=partner_summary2adjacency_matrix(da2ds15, inputcol = 'partner', outputcol = 'bodyid')
+#' tanimoto_sim(am)
+tanimoto_sim <- function(x, sparse = FALSE, transpose = FALSE) {
+  cx <- class(x)
+  if (!is.matrix(x) && !isTRUE(attr(cx, "package") == "Matrix"))
+    stop("I don't recognise that as a matrix!")
+  if (!inherits(x, "dgCMatrix"))
+    x <- as(x, "dgCMatrix")
+  crossfun <- if (transpose) Matrix::tcrossprod else Matrix::crossprod
+
+  # dot(a,b) for all pairs via crossprod (returns symmetric dsCMatrix)
+  A <- crossfun(x)
+  norms2 <- Matrix::diag(A)
+
+  # T(a,b) = dot(a,b) / (||a||^2 + ||b||^2 - dot(a,b))
+  # Work directly on the symmetric matrix (upper triangle stored)
+  if (length(A@x)) {
+    col_idx <- rep(seq_along(diff(A@p)), diff(A@p))
+    row_idx <- A@i + 1L
+    denom <- norms2[row_idx] + norms2[col_idx] - A@x
+    nonzero <- denom != 0
+    A@x[nonzero] <- A@x[nonzero] / denom[nonzero]
+    A@x[!nonzero] <- 0
+  }
+  Matrix::diag(A) <- 1
+  sim <- A
 
   if (sparse) sim else as.matrix(sim)
 }
