@@ -20,8 +20,11 @@ Imports:
     glue,
     Matrix (>= 1.5-3),
     methods,
+    Rcpp,
     grDevices,
     stats
+LinkingTo:
+    Rcpp
 Suggests: 
     covr,
     spelling,

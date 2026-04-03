@@ -139,6 +139,44 @@ test_that("jaccard_sim sparse output parameter works", {
   expect_equal(as.matrix(jws), jaccard_sim(m, weighted = TRUE, sparse = FALSE))
 })
 
+test_that("all weighted jaccard methods agree", {
+  m_sparse <- Matrix::Matrix(c(4,0,1, 2,3,1, 0,3,0), nrow = 3, ncol = 3, sparse = TRUE)
+  colnames(m_sparse) <- c("n1", "n2", "n3")
+  rownames(m_sparse) <- c("p1", "p2", "p3")
+  m_dense <- as.matrix(m_sparse)
+
+  ref <- jaccard_sim(m_sparse, weighted = TRUE, weighted_method = "dense")
+  ref_t <- jaccard_sim(m_sparse, weighted = TRUE, transpose = TRUE,
+                       weighted_method = "dense")
+
+  for (method in c("sparse", "dense", "cpp_dense", "cpp_sparse")) {
+    suppressWarnings({
+      # Default (dense return, transpose=FALSE)
+      expect_equal(
+        jaccard_sim(m_sparse, weighted = TRUE, weighted_method = method),
+        ref, info = paste(method, "sparse input")
+      )
+      # Dense matrix input
+      expect_equal(
+        jaccard_sim(m_dense, weighted = TRUE, weighted_method = method),
+        ref, info = paste(method, "dense input")
+      )
+      # transpose=TRUE
+      expect_equal(
+        jaccard_sim(m_sparse, weighted = TRUE, transpose = TRUE,
+                    weighted_method = method),
+        ref_t, info = paste(method, "transpose")
+      )
+      # sparse return
+      expect_equal(
+        as.matrix(jaccard_sim(m_sparse, weighted = TRUE, sparse = TRUE,
+                              weighted_method = method)),
+        ref, info = paste(method, "sparse return")
+      )
+    })
+  }
+})
+
 test_that("jaccard_sim transpose parameter works", {
   m <- Matrix::Matrix(c(4,0,1, 2,3,1, 0,3,0), nrow = 3, ncol = 3, sparse = TRUE)
   colnames(m) <- c("n1", "n2", "n3")

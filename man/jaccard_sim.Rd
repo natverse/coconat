@@ -4,7 +4,13 @@
 \alias{jaccard_sim}
 \title{Jaccard similarity for sparse or dense matrices}
 \usage{
-jaccard_sim(x, weighted = FALSE, sparse = FALSE, transpose = FALSE)
+jaccard_sim(
+  x,
+  weighted = FALSE,
+  sparse = FALSE,
+  transpose = FALSE,
+  weighted_method = c("auto", "cpp_dense", "cpp_sparse", "dense", "sparse")
+)
 }
 \arguments{
 \item{x}{A data matrix suitable for clustering (non-negative values expected)}
@@ -17,6 +23,14 @@ similarity.}
 
 \item{transpose}{When \code{FALSE} (the default) calculates similarity
 between columns. When \code{TRUE} calculates similarity between rows.}
+
+\item{weighted_method}{Algorithm to use when \code{weighted=TRUE}.
+\code{"auto"} (the default) selects the best available backend: compiled
+C++ dense for moderate output sizes, compiled C++ sparse when the output
+exceeds \code{10000 x 10000}, or pure R dense as a fallback when compiled
+code is unavailable. Explicit choices: \code{"cpp_dense"} and
+\code{"cpp_sparse"} for the compiled backends, \code{"dense"} and
+\code{"sparse"} for the pure R implementations.}
 }
 \value{
 A square similarity matrix with values in \code{[0,1]}.
@@ -30,9 +44,9 @@ Computes pairwise Jaccard similarity between columns (or rows)
 \details{
 Both variants are optimised for sparse matrices. The binary variant
   uses \code{Matrix::crossprod} on the binarised matrix for efficient
-  intersection/union computation. The weighted variant uses the identity
-  \code{min(a,b) = (a + b - |a - b|) / 2} to leverage sparse matrix
-  arithmetic.
+  intersection/union computation. The weighted variant accumulates
+  \code{sum(min(a,b))} across shared features for each pair; compiled C++
+  backends are available for both dense and sparse output.
 }
 \examples{
 da2ds15=readRDS(system.file('sampledata/da2ds15.rds', package = 'coconat'))
