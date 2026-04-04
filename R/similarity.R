@@ -105,8 +105,8 @@ jaccard_sim <- function(x, weighted = FALSE, sparse = FALSE, transpose = FALSE,
     sim <- A
   } else {
     if (weighted_method == "auto") {
-      has_cpp <- is.function(tryCatch(weighted_jaccard_dense_cpp,
-                                      error = function(e) NULL))
+      has_cpp <- requireNamespace("natcpp", quietly = TRUE) &&
+        utils::packageVersion("natcpp") >= "0.3.0"
       ncomp <- if (transpose) nrow(x) else ncol(x)
       if (has_cpp) {
         weighted_method <- if (ncomp > 10000L) "cpp_sparse" else "cpp_dense"
@@ -164,36 +164,11 @@ jaccard_weighted_feature_view <- function(x, transpose = FALSE) {
 }
 
 jaccard_sim_weighted_cpp_sparse <- function(x, sparse = TRUE, transpose = FALSE) {
-  crossfun <- if (transpose) Matrix::tcrossprod else Matrix::crossprod
   n <- if (transpose) nrow(x) else ncol(x)
   nms <- if (transpose) rownames(x) else colnames(x)
-  if (length(x@x) == 0L) {
-    sim <- Matrix::sparseMatrix(i = seq_len(n), j = seq_len(n), x = 1,
-                                dims = c(n, n), dimnames = list(nms, nms))
-    return(if (sparse) sim else as.matrix(sim))
-  }
-
-  # Get sparsity pattern via crossprod of binarised matrix
-  b <- x
-  b@x <- rep(1, length(b@x))
-  A <- as(crossfun(b), "generalMatrix")
-
-  # Column sums for denominator
-  totals <- if (transpose) Matrix::rowSums(x) else Matrix::colSums(x)
-
-  # Fill in min_sums using C++
-  A@x <- weighted_jaccard_sparse_fill_cpp(x, A, transpose = transpose)
-
-  # Convert min_sums to similarity: sim = ms / (s_i + s_j - ms)
-  col_idx <- rep(seq_along(diff(A@p)), diff(A@p))
-  row_idx <- A@i + 1L
-  denom <- totals[row_idx] + totals[col_idx] - A@x
-  nonzero <- denom != 0
-  A@x[nonzero] <- A@x[nonzero] / denom[nonzero]
-  A@x[!nonzero] <- 0
-  Matrix::diag(A) <- 1
-
-  if (sparse) A else as.matrix(A)
+  sim <- natcpp::c_weighted_jaccard_sparse(x, transpose = transpose)
+  dimnames(sim) <- list(nms, nms)
+  if (sparse) sim else as.matrix(sim)
 }
 
 jaccard_sim_weighted_cpp_dense <- function(x, sparse = FALSE, transpose = FALSE) {
@@ -205,7 +180,7 @@ jaccard_sim_weighted_cpp_dense <- function(x, sparse = FALSE, transpose = FALSE)
     if (sparse) return(Matrix::Matrix(sim, sparse = TRUE))
     return(sim)
   }
-  sim <- weighted_jaccard_dense_cpp(x, transpose = transpose)
+  sim <- natcpp::c_weighted_jaccard_dense(x, transpose = transpose)
   dimnames(sim) <- list(nms, nms)
   if (sparse) Matrix::Matrix(sim, sparse = TRUE) else sim
 }

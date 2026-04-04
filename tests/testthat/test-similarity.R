@@ -149,7 +149,11 @@ test_that("all weighted jaccard methods agree", {
   ref_t <- jaccard_sim(m_sparse, weighted = TRUE, transpose = TRUE,
                        weighted_method = "dense")
 
-  for (method in c("sparse", "dense", "cpp_dense", "cpp_sparse")) {
+  r_methods <- c("sparse", "dense")
+  cpp_methods <- if (requireNamespace("natcpp", quietly = TRUE))
+    c("cpp_dense", "cpp_sparse") else character(0)
+
+  for (method in c(r_methods, cpp_methods)) {
     suppressWarnings({
       # Default (dense return, transpose=FALSE)
       expect_equal(

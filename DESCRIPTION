@@ -20,13 +20,11 @@ Imports:
     glue,
     Matrix (>= 1.5-3),
     methods,
-    Rcpp,
     grDevices,
     stats
-LinkingTo:
-    Rcpp
-Suggests: 
+Suggests:
     covr,
+    natcpp (>= 0.3.0),
     spelling,
     testthat (>= 3.0.0),
     ComplexHeatmap,
