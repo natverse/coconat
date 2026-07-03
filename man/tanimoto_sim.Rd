@@ -4,7 +4,13 @@
 \alias{tanimoto_sim}
 \title{Tanimoto (extended Jaccard) similarity for sparse or dense matrices}
 \usage{
-tanimoto_sim(x, sparse = FALSE, transpose = FALSE)
+tanimoto_sim(
+  x,
+  sparse = FALSE,
+  transpose = FALSE,
+  triangle = FALSE,
+  distance = FALSE
+)
 }
 \arguments{
 \item{x}{A data matrix suitable for clustering (non-negative values expected)}
@@ -13,9 +19,16 @@ tanimoto_sim(x, sparse = FALSE, transpose = FALSE)
 
 \item{transpose}{When \code{FALSE} (the default) calculates similarity
 between columns. When \code{TRUE} calculates similarity between rows.}
+
+\item{triangle}{If \code{TRUE}, return a \code{\link{dist}} object (lower
+triangle only, half memory). Default \code{FALSE}.}
+
+\item{distance}{If \code{TRUE}, return distance (\code{1 - similarity})
+instead of similarity. Default \code{FALSE}.}
 }
 \value{
-A square similarity matrix with values in \code{[0,1]}.
+A square similarity matrix, or a \code{\link{dist}} object when
+  \code{triangle = TRUE}.
 }
 \description{
 Computes pairwise Tanimoto similarity between columns (or rows)

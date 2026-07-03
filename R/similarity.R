@@ -14,8 +14,13 @@
 #' @param sparse Whether to return a sparse matrix (default \code{FALSE})
 #' @param transpose When \code{FALSE} (the default) calculates similarity
 #'   between columns. When \code{TRUE} calculates similarity between rows.
+#' @param triangle If \code{TRUE}, return a \code{\link{dist}} object (lower
+#'   triangle only, half memory). Default \code{FALSE}.
+#' @param distance If \code{TRUE}, return distance (\code{1 - similarity})
+#'   instead of similarity. Default \code{FALSE}.
 #'
-#' @return A square similarity matrix with values in \code{[0,1]}.
+#' @return A square similarity matrix, or a \code{\link{dist}} object when
+#'   \code{triangle = TRUE}.
 #' @export
 #' @seealso \code{\link{cosine_sim}}, \code{\link{jaccard_sim}},
 #'   \code{\link{tanimoto_sim}}
@@ -27,16 +32,45 @@
 #' connectivity_similarity(am, metric="weighted_jaccard")
 #' connectivity_similarity(am, metric="tanimoto")
 connectivity_similarity <- function(x, metric = c("cosine", "jaccard", "weighted_jaccard", "tanimoto"),
-                                    sparse = FALSE, transpose = FALSE) {
+                                    sparse = FALSE, transpose = FALSE,
+                                    triangle = FALSE, distance = FALSE) {
   metric <- match.arg(metric)
   switch(metric,
-    cosine = cosine_sim(x, sparse = sparse, transpose = transpose),
-    jaccard = jaccard_sim(x, weighted = FALSE, sparse = sparse, transpose = transpose),
-    weighted_jaccard = jaccard_sim(x, weighted = TRUE, sparse = sparse, transpose = transpose),
-    tanimoto = tanimoto_sim(x, sparse = sparse, transpose = transpose)
+    cosine = cosine_sim(x, sparse = sparse, transpose = transpose,
+                        triangle = triangle, distance = distance),
+    jaccard = jaccard_sim(x, weighted = FALSE, sparse = sparse, transpose = transpose,
+                          triangle = triangle, distance = distance),
+    weighted_jaccard = jaccard_sim(x, weighted = TRUE, sparse = sparse, transpose = transpose,
+                                   triangle = triangle, distance = distance),
+    tanimoto = tanimoto_sim(x, sparse = sparse, transpose = transpose,
+                            triangle = triangle, distance = distance)
   )
 }
 
+
+warn_hourly_check <- memoise::memoise(function(msg) TRUE,
+                                      ~ memoise::timeout(3600))
+
+warn_hourly <- function(msg) {
+  cached <- memoise::has_cache(warn_hourly_check)(msg)
+  warn_hourly_check(msg)  # populate cache before warning
+  if (!cached)
+    warning(msg, call. = FALSE, immediate. = TRUE)
+}
+
+warn_natcpp <- function() {
+  has <- requireNamespace("natcpp", quietly = TRUE)
+  if (has) {
+    msg <- paste0("natcpp (>= 0.3.0) is required for fast weighted Jaccard. ",
+                  "You have ", utils::packageVersion("natcpp"), ". ",
+                  "Please update with: ",
+                  "install.packages('natcpp', repos='https://natverse.r-universe.dev')")
+  } else {
+    msg <- paste0("Install the natcpp package for much faster weighted Jaccard: ",
+                  "install.packages('natcpp', repos='https://natverse.r-universe.dev')")
+  }
+  warn_hourly(msg)
+}
 
 #' Jaccard similarity for sparse or dense matrices
 #'
@@ -65,8 +99,13 @@ connectivity_similarity <- function(x, metric = c("cosine", "jaccard", "weighted
 #' @param sparse Whether to return a sparse matrix (default \code{FALSE})
 #' @param transpose When \code{FALSE} (the default) calculates similarity
 #'   between columns. When \code{TRUE} calculates similarity between rows.
+#' @param triangle If \code{TRUE}, return a \code{\link{dist}} object (lower
+#'   triangle only, half memory). Default \code{FALSE}.
+#' @param distance If \code{TRUE}, return distance (\code{1 - similarity})
+#'   instead of similarity. Default \code{FALSE}.
 #'
-#' @return A square similarity matrix with values in \code{[0,1]}.
+#' @return A square similarity matrix, or a \code{\link{dist}} object when
+#'   \code{triangle = TRUE}.
 #' @importFrom methods as
 #' @export
 #' @seealso \code{\link{cosine_sim}}, \code{\link{connectivity_similarity}}
@@ -79,7 +118,8 @@ connectivity_similarity <- function(x, metric = c("cosine", "jaccard", "weighted
 #' jaccard_sim(am, weighted=TRUE)
 jaccard_sim <- function(x, weighted = FALSE, sparse = FALSE, transpose = FALSE,
                         weighted_method = c("auto", "cpp_dense", "cpp_sparse",
-                                            "dense", "sparse")) {
+                                            "dense", "sparse"),
+                        triangle = FALSE, distance = FALSE) {
   cx <- class(x)
   if (!is.matrix(x) && !isTRUE(attr(cx, "package") == "Matrix"))
     stop("I don't recognise that as a matrix!")
@@ -102,7 +142,9 @@ jaccard_sim <- function(x, weighted = FALSE, sparse = FALSE, transpose = FALSE,
     isect <- A@x
     A@x <- isect / (sizes[row_idx] + sizes[col_idx] - isect)
     Matrix::diag(A) <- 1
-    sim <- A
+    dimnames(A) <- list(nms, nms)
+    return(sim_to_output(A, sparse = sparse, triangle = triangle,
+                         distance = distance))
   } else {
     if (weighted_method == "auto") {
       has_cpp <- requireNamespace("natcpp", quietly = TRUE) &&
@@ -111,18 +153,24 @@ jaccard_sim <- function(x, weighted = FALSE, sparse = FALSE, transpose = FALSE,
       if (has_cpp) {
         weighted_method <- if (ncomp > 10000L) "cpp_sparse" else "cpp_dense"
       } else {
+        warn_natcpp()
         weighted_method <- "dense"
       }
     }
     sim <- switch(weighted_method,
-      cpp_dense = jaccard_sim_weighted_cpp_dense(x, sparse = sparse, transpose = transpose),
-      cpp_sparse = jaccard_sim_weighted_cpp_sparse(x, sparse = sparse, transpose = transpose),
-      dense = jaccard_sim_weighted_dense_r(x, sparse = sparse, transpose = transpose),
-      sparse = jaccard_sim_weighted_sparse_r(x, sparse = TRUE, transpose = transpose)
+      cpp_dense = jaccard_sim_weighted_cpp_dense(x, sparse = sparse, transpose = transpose,
+                                                  triangle = triangle, distance = distance),
+      cpp_sparse = jaccard_sim_weighted_cpp_sparse(x, sparse = sparse, transpose = transpose,
+                                                    triangle = triangle, distance = distance),
+      dense = jaccard_sim_weighted_dense_r(x, sparse = sparse, transpose = transpose,
+                                           triangle = triangle, distance = distance),
+      sparse = jaccard_sim_weighted_sparse_r(x, sparse = TRUE, transpose = transpose,
+                                              triangle = triangle, distance = distance)
     )
   }
 
-  if (sparse) sim else as.matrix(sim)
+  if (inherits(sim, "dist")) sim
+  else if (sparse) sim else as.matrix(sim)
 }
 
 jaccard_weighted_feature_view <- function(x, transpose = FALSE) {
@@ -163,36 +211,58 @@ jaccard_weighted_feature_view <- function(x, transpose = FALSE) {
   )
 }
 
-jaccard_sim_weighted_cpp_sparse <- function(x, sparse = TRUE, transpose = FALSE) {
+jaccard_sim_weighted_cpp_sparse <- function(x, sparse = TRUE, transpose = FALSE,
+                                             triangle = FALSE, distance = FALSE) {
   n <- if (transpose) nrow(x) else ncol(x)
   nms <- if (transpose) rownames(x) else colnames(x)
-  sim <- natcpp::c_weighted_jaccard_sparse(x, transpose = transpose)
+  sim <- natcpp::c_weighted_jaccard_sparse(x, transpose = transpose,
+                                           triangle = triangle, distance = distance)
   dimnames(sim) <- list(nms, nms)
   if (sparse) sim else as.matrix(sim)
 }
 
-jaccard_sim_weighted_cpp_dense <- function(x, sparse = FALSE, transpose = FALSE) {
+jaccard_sim_weighted_cpp_dense <- function(x, sparse = FALSE, transpose = FALSE,
+                                            triangle = FALSE, distance = FALSE) {
   n <- if (transpose) nrow(x) else ncol(x)
   nms <- if (transpose) rownames(x) else colnames(x)
   if (length(x@x) == 0L) {
-    sim <- diag(n)
+    if (triangle) {
+      d <- rep(if (distance) 1 else 0, n * (n - 1L) / 2L)
+      return(structure(d, Size = n, Labels = nms, Diag = FALSE, Upper = FALSE,
+                       class = "dist"))
+    }
+    sim <- if (distance) matrix(1, n, n) - diag(n) else diag(n)
     dimnames(sim) <- list(nms, nms)
     if (sparse) return(Matrix::Matrix(sim, sparse = TRUE))
     return(sim)
   }
-  sim <- natcpp::c_weighted_jaccard_dense(x, transpose = transpose)
-  dimnames(sim) <- list(nms, nms)
-  if (sparse) Matrix::Matrix(sim, sparse = TRUE) else sim
+  res <- natcpp::c_weighted_jaccard_dense(x, transpose = transpose,
+                                          triangle = triangle, distance = distance)
+  if (triangle) {
+    attr(res, "Labels") <- nms
+    return(res)
+  }
+  dimnames(res) <- list(nms, nms)
+  if (sparse) Matrix::Matrix(res, sparse = TRUE) else res
 }
 
-jaccard_sim_weighted_sparse_r <- function(x, sparse = TRUE, transpose = FALSE) {
-  warning("Using slow pure R sparse weighted Jaccard. ",
-          "Install the natcpp package for much faster compiled code.",
-          call. = FALSE)
+jaccard_sim_weighted_sparse_r <- function(x, sparse = TRUE, transpose = FALSE,
+                                          triangle = FALSE, distance = FALSE) {
+  warn_natcpp()
+  if (distance)
+    warning("distance=TRUE with sparse output produces a mostly-dense matrix; ",
+            "consider using the dense backend with triangle=TRUE instead.",
+            call. = FALSE)
   n <- if (transpose) nrow(x) else ncol(x)
   nms <- if (transpose) rownames(x) else colnames(x)
   if (length(x@x) == 0L) {
-    sim <- Matrix::sparseMatrix(i = seq_len(n), j = seq_len(n), x = 1,
+    if (triangle) {
+      d <- rep(if (distance) 1 else 0, n * (n - 1L) / 2L)
+      return(structure(d, Size = n, Labels = nms, Diag = FALSE, Upper = FALSE,
+                       class = "dist"))
+    }
+    sim_val <- if (distance) 0 else 1
+    sim <- Matrix::sparseMatrix(i = seq_len(n), j = seq_len(n), x = sim_val,
                                 dims = c(n, n), dimnames = list(nms, nms))
     return(if (sparse) sim else as.matrix(sim))
   }
@@ -259,14 +329,31 @@ jaccard_sim_weighted_sparse_r <- function(x, sparse = TRUE, transpose = FALSE) {
   min_sums@x[!nz] <- 0
   Matrix::diag(min_sums) <- 1
 
+  if (triangle) {
+    dm <- as.matrix(min_sums)
+    d <- dm[lower.tri(dm)]
+    if (distance) d <- 1 - d
+    return(structure(d, Size = n, Labels = nms, Diag = FALSE, Upper = FALSE,
+                     class = "dist"))
+  }
+
+  if (distance)
+    min_sums@x <- 1 - min_sums@x
+
   if (sparse) min_sums else as.matrix(min_sums)
 }
 
-jaccard_sim_weighted_dense_r <- function(x, sparse = FALSE, transpose = FALSE) {
+jaccard_sim_weighted_dense_r <- function(x, sparse = FALSE, transpose = FALSE,
+                                         triangle = FALSE, distance = FALSE) {
   n <- if (transpose) nrow(x) else ncol(x)
   nms <- if (transpose) rownames(x) else colnames(x)
   if (length(x@x) == 0L) {
-    sim <- diag(1, n)
+    if (triangle) {
+      d <- rep(if (distance) 1 else 0, n * (n - 1L) / 2L)
+      return(structure(d, Size = n, Labels = nms, Diag = FALSE, Upper = FALSE,
+                       class = "dist"))
+    }
+    sim <- if (distance) matrix(1, n, n) - diag(n) else diag(1, n)
     dimnames(sim) <- list(nms, nms)
     return(if (sparse) Matrix::Matrix(sim, sparse = TRUE) else sim)
   }
@@ -294,8 +381,17 @@ jaccard_sim_weighted_dense_r <- function(x, sparse = FALSE, transpose = FALSE) {
     out[!nz, j] <- 0
     out[j, j] <- 1
   }
-  dimnames(out) <- list(nms, nms)
 
+  if (triangle) {
+    d <- out[lower.tri(out)]
+    if (distance) d <- 1 - d
+    return(structure(d, Size = ncomp, Labels = nms, Diag = FALSE, Upper = FALSE,
+                     class = "dist"))
+  }
+
+  if (distance) out <- 1 - out
+
+  dimnames(out) <- list(nms, nms)
   if (sparse) Matrix::Matrix(out, sparse = TRUE) else out
 }
 
@@ -311,8 +407,13 @@ jaccard_sim_weighted_dense_r <- function(x, sparse = FALSE, transpose = FALSE) {
 #' @param sparse Whether to return a sparse matrix (default \code{FALSE})
 #' @param transpose When \code{FALSE} (the default) calculates similarity
 #'   between columns. When \code{TRUE} calculates similarity between rows.
+#' @param triangle If \code{TRUE}, return a \code{\link{dist}} object (lower
+#'   triangle only, half memory). Default \code{FALSE}.
+#' @param distance If \code{TRUE}, return distance (\code{1 - similarity})
+#'   instead of similarity. Default \code{FALSE}.
 #'
-#' @return A square similarity matrix with values in \code{[0,1]}.
+#' @return A square similarity matrix, or a \code{\link{dist}} object when
+#'   \code{triangle = TRUE}.
 #' @importFrom methods as
 #' @export
 #' @seealso \code{\link{jaccard_sim}}, \code{\link{cosine_sim}},
@@ -321,13 +422,15 @@ jaccard_sim_weighted_dense_r <- function(x, sparse = FALSE, transpose = FALSE) {
 #' da2ds15=readRDS(system.file('sampledata/da2ds15.rds', package = 'coconat'))
 #' am=partner_summary2adjacency_matrix(da2ds15, inputcol = 'partner', outputcol = 'bodyid')
 #' tanimoto_sim(am)
-tanimoto_sim <- function(x, sparse = FALSE, transpose = FALSE) {
+tanimoto_sim <- function(x, sparse = FALSE, transpose = FALSE,
+                         triangle = FALSE, distance = FALSE) {
   cx <- class(x)
   if (!is.matrix(x) && !isTRUE(attr(cx, "package") == "Matrix"))
     stop("I don't recognise that as a matrix!")
   if (!inherits(x, "dgCMatrix"))
     x <- as(x, "dgCMatrix")
   crossfun <- if (transpose) Matrix::tcrossprod else Matrix::crossprod
+  nms <- if (transpose) rownames(x) else colnames(x)
 
   # dot(a,b) for all pairs via crossprod (returns symmetric dsCMatrix)
   A <- crossfun(x)
@@ -344,7 +447,100 @@ tanimoto_sim <- function(x, sparse = FALSE, transpose = FALSE) {
     A@x[!nonzero] <- 0
   }
   Matrix::diag(A) <- 1
-  sim <- A
+  dimnames(A) <- list(nms, nms)
 
+  sim_to_output(A, sparse = sparse, triangle = triangle, distance = distance)
+}
+
+
+#' @noRd
+sim_to_output <- function(sim, sparse = FALSE, triangle = FALSE, distance = FALSE) {
+  if (triangle) {
+    if (inherits(sim, "dsCMatrix")) {
+      d <- dsCMatrix_to_dist(sim, distance = distance)
+    } else {
+      dm <- as.matrix(sim)
+      d <- dm[lower.tri(dm)]
+      if (distance) d <- 1 - d
+      nms <- rownames(dm)
+      d <- structure(d, Size = nrow(dm), Labels = nms, Diag = FALSE,
+                     Upper = FALSE, class = "dist")
+    }
+    return(d)
+  }
+  if (distance) {
+    sim <- if (is.matrix(sim)) 1 - sim else 1 - as.matrix(sim)
+    return(sim)
+  }
   if (sparse) sim else as.matrix(sim)
+}
+
+#' Extract lower triangle from a dsCMatrix as a dist object without densifying
+#' @noRd
+dsCMatrix_to_dist <- function(x, distance = FALSE) {
+  n <- nrow(x)
+  fill_val <- if (distance) 1 else 0
+  d <- rep(fill_val, n * (n - 1L) / 2L)
+
+  col0 <- rep(seq_along(diff(x@p)), diff(x@p)) - 1L
+  row0 <- x@i
+  vals <- x@x
+
+  # Keep only off-diagonal entries (upper triangle: row0 < col0)
+  offdiag <- row0 != col0
+  row0 <- row0[offdiag]
+  col0 <- col0[offdiag]
+  vals <- vals[offdiag]
+
+  if (length(vals)) {
+    # dsCMatrix stores upper triangle (row < col).
+    # dist layout is lower triangle column-major: for pair (i,j), i > j:
+    #   pos = (j-1)*n - j*(j-1)/2 + (i-j)   [1-based]
+    # Here row0 < col0 (0-based), so i=col0+1, j=row0+1:
+    r <- row0 + 1L
+    cc <- col0 + 1L
+    pos <- (r - 1L) * n - r * (r - 1L) / 2L + (cc - r)
+    d[pos] <- if (distance) 1 - vals else vals
+  }
+
+  structure(d, Size = n, Labels = rownames(x),
+            Diag = FALSE, Upper = FALSE, class = "dist")
+}
+
+#' Convert a symmetric sparse similarity matrix to a dist object
+#'
+#' Efficiently converts a symmetric sparse similarity matrix (\code{dsCMatrix})
+#' to a \code{\link{dist}} object without materialising the full dense matrix.
+#' Similarity values are converted to distances as \code{1 - similarity}.
+#'
+#' @param x A symmetric sparse matrix of class \code{dsCMatrix} with values in
+#'   \code{[0,1]}, as returned by e.g. \code{\link{jaccard_sim}} with
+#'   \code{sparse=TRUE}.
+#' @return A \code{\link{dist}} object
+#' @export
+sim2dist <- function(x) {
+  if (!inherits(x, "dsCMatrix"))
+    stop("x must be a dsCMatrix (symmetric sparse column-compressed matrix)")
+  n <- nrow(x)
+  # Pre-fill with distance=1 (similarity=0 for absent pairs)
+  d <- rep(1, n * (n - 1L) / 2L)
+
+  # Extract upper triangle entries (excluding diagonal)
+  col0 <- rep(seq_along(diff(x@p)), diff(x@p)) - 1L
+  row0 <- x@i
+  vals <- x@x
+
+  offdiag <- row0 != col0
+  row0 <- row0[offdiag]
+  col0 <- col0[offdiag]
+  vals <- vals[offdiag]
+
+  # Map upper triangle (r,c) r<c to dist position (1-based)
+  r <- row0 + 1L
+  cc <- col0 + 1L
+  pos <- (r - 1L) * n - r * (r - 1L) / 2L + (cc - r)
+  d[pos] <- 1 - vals
+
+  structure(d, Size = n, Labels = rownames(x),
+            Diag = FALSE, Upper = FALSE, class = "dist")
 }

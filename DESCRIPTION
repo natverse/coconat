@@ -19,6 +19,7 @@ Imports:
     checkmate,
     glue,
     Matrix (>= 1.5-3),
+    memoise,
     methods,
     grDevices,
     stats

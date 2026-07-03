@@ -8,7 +8,9 @@ connectivity_similarity(
   x,
   metric = c("cosine", "jaccard", "weighted_jaccard", "tanimoto"),
   sparse = FALSE,
-  transpose = FALSE
+  transpose = FALSE,
+  triangle = FALSE,
+  distance = FALSE
 )
 }
 \arguments{
@@ -23,9 +25,16 @@ connectivity_similarity(
 
 \item{transpose}{When \code{FALSE} (the default) calculates similarity
 between columns. When \code{TRUE} calculates similarity between rows.}
+
+\item{triangle}{If \code{TRUE}, return a \code{\link{dist}} object (lower
+triangle only, half memory). Default \code{FALSE}.}
+
+\item{distance}{If \code{TRUE}, return distance (\code{1 - similarity})
+instead of similarity. Default \code{FALSE}.}
 }
 \value{
-A square similarity matrix with values in \code{[0,1]}.
+A square similarity matrix, or a \code{\link{dist}} object when
+  \code{triangle = TRUE}.
 }
 \description{
 \code{connectivity_similarity} computes pairwise similarity

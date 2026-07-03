@@ -4,7 +4,13 @@
 \alias{cosine_sim}
 \title{Efficient calculation of cosine similarity for sparse or dense matrices}
 \usage{
-cosine_sim(x, sparse = FALSE, transpose = FALSE)
+cosine_sim(
+  x,
+  sparse = FALSE,
+  transpose = FALSE,
+  triangle = FALSE,
+  distance = FALSE
+)
 }
 \arguments{
 \item{x}{A data matrix suitable for clustering}
@@ -13,10 +19,16 @@ cosine_sim(x, sparse = FALSE, transpose = FALSE)
 
 \item{transpose}{When \code{F} (the default) calculates the cosine distance
 between columns. When \code{T} calculates the distance between rows.}
+
+\item{triangle}{If \code{TRUE}, return a \code{\link{dist}} object (lower
+triangle only, half memory). Default \code{FALSE}.}
+
+\item{distance}{If \code{TRUE}, return distance (\code{1 - similarity})
+instead of similarity. Default \code{FALSE}.}
 }
 \value{
-A square matrix, dense unless \code{sparse=TRUE} and \code{x} is
-  sparse.
+A square matrix, or a \code{\link{dist}} object when
+  \code{triangle = TRUE}.
 }
 \description{
 Efficient calculation of cosine similarity for sparse or dense matrices

@@ -7,9 +7,13 @@
 #' @param sparse Whether to return a sparse or dense matrix (default dense)
 #' @param transpose When \code{F} (the default) calculates the cosine distance
 #'   between columns. When \code{T} calculates the distance between rows.
+#' @param triangle If \code{TRUE}, return a \code{\link{dist}} object (lower
+#'   triangle only, half memory). Default \code{FALSE}.
+#' @param distance If \code{TRUE}, return distance (\code{1 - similarity})
+#'   instead of similarity. Default \code{FALSE}.
 #'
-#' @return A square matrix, dense unless \code{sparse=TRUE} and \code{x} is
-#'   sparse.
+#' @return A square matrix, or a \code{\link{dist}} object when
+#'   \code{triangle = TRUE}.
 #' @export
 #'
 #' @examples
@@ -24,13 +28,14 @@
 #' kckc.cos=cosine_sim(fam_pnkc2)
 #' pnpn.cos=cosine_sim(fam_pnkc2, transpose=T)
 #' }
-cosine_sim <- function(x, sparse=FALSE, transpose=FALSE) {
+cosine_sim <- function(x, sparse=FALSE, transpose=FALSE,
+                       triangle=FALSE, distance=FALSE) {
   cx=class(x)
   if(!is.matrix(x) && !isTRUE(attr(cx, "package") == "Matrix"))
     stop("I don't recognise that as a matrix!")
   cpx <- if(transpose) Matrix::tcrossprod(x) else Matrix::crossprod(x)
-  cosx=Matrix::cov2cor(cpx)
-  if(sparse) cosx else as.matrix(cosx)
+  sim=Matrix::cov2cor(cpx)
+  sim_to_output(sim, sparse=sparse, triangle=triangle, distance=distance)
 }
 
 
