@@ -14,6 +14,10 @@
   matrices
 - [`dataset_names()`](https://natverse.org/coconat/reference/dataset_names.md)
   : Return dataset names either all or those matching a query
+- [`effective_connectivity()`](https://natverse.org/coconat/reference/effective_connectivity.md)
+  : Effective connectivity through multi-step pathways
+- [`grouping_matrix()`](https://natverse.org/coconat/reference/grouping_matrix.md)
+  : Sparse 0/1 aggregation matrix mapping ids to groups
 - [`id2char()`](https://natverse.org/coconat/reference/id2char.md) :
   Convert any id into a character vector
 - [`partner_summary2adjacency_matrix()`](https://natverse.org/coconat/reference/partner_summary2adjacency_matrix.md)

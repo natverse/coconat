@@ -18,6 +18,7 @@ You can install the development version of coconat from
 [GitHub](https://github.com/) with:
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("natverse/coconat")
 ```
@@ -27,6 +28,7 @@ devtools::install_github("natverse/coconat")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
+
 library(coconat)
 # da2ds=neuprintr::neuprint_connection_table('DA2_lPN', details=TRUE, partners='out', conn = hbconn)
 da2ds=readRDS(system.file('sampledata/da2ds.rds', package = 'coconat'))
@@ -41,6 +43,7 @@ head(da2ds)
 ```
 
 ``` r
+
 library(Matrix)
 am=partner_summary2adjacency_matrix(da2ds, inputcol = 'bodyid', outputcol = 'partner')
 image(am)
@@ -49,6 +52,7 @@ image(am)
 ![](reference/figures/README-unnamed-chunk-2-1.png)
 
 ``` r
+
 
 am2=partner_summary2adjacency_matrix(subset(da2ds, weight>=15), 
                                      inputcol = 'bodyid', outputcol = 'partner')
@@ -61,6 +65,7 @@ cosine cluster
 We can do this for the inputs (the 5 PNs should look much the same)
 
 ``` r
+
 heatmap(cosine_sim(am, transpose = T))
 ```
 
@@ -69,6 +74,7 @@ heatmap(cosine_sim(am, transpose = T))
 Or the outputs
 
 ``` r
+
 heatmap(cosine_sim(am))
 ```
 

@@ -1,6 +1,7 @@
 # identifiers-and-datasets
 
 ``` r
+
 library(coconat)
 ```
 
@@ -13,6 +14,7 @@ that we use to refer to them.
 You can tell coconat about a new dataset by doing:
 
 ``` r
+
 register_dataset('flywire', shortname = 'fw', species = 'Drosophila melanogaster', sex = 'F')
 ```
 
@@ -39,6 +41,7 @@ convert numeric ids to a character representation taking care of issues
 like the fact that `as.character(1e5)`=1e+05 which can cause trouble.
 
 ``` r
+
 id2char(1000)
 #> [1] "1000"
 id2char(1e5)
