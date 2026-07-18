@@ -32,13 +32,14 @@ custom_interactive_heatmap <- function(hm) {
   shiny::shinyApp(ui, server)
 }
 
-# private function to draw a cosine heatmap using either the basic stats::heatmap
-# or InteractiveComplexHeatmap
+# private function to draw a connectivity heatmap using either the basic
+# stats::heatmap or InteractiveComplexHeatmap
 #
 #' @importFrom stats heatmap as.dist hclust
 #' @importFrom grDevices hcl.colors
-cosine_heatmap <- function(x, labRow=rownames(x), interactive=FALSE,
+connectivity_heatmap <- function(x, labRow=rownames(x), interactive=FALSE,
                            heatmap=TRUE, col=hcl.colors(12, "YlOrRd", rev = TRUE),
+                           distfun=function(x) as.dist(1-x),
                            method=c("ward.D", "single", "complete", "average",
                                     "mcquitty", "median", "centroid", "ward.D2"),
                                    ...) {
@@ -57,17 +58,19 @@ cosine_heatmap <- function(x, labRow=rownames(x), interactive=FALSE,
       x,
       row_labels=labRow,
       col=col,
-      cluster_rows=function(x,...) hclust(as.dist(1-x), method=method,...),
-      cluster_columns=function(x,...) hclust(as.dist(1-x), method=method,...),
+      cluster_rows=function(x,...) hclust(distfun(x), method=method,...),
+      cluster_columns=function(x,...) hclust(distfun(x), method=method,...),
       ...
     )
     custom_interactive_heatmap(hm)
   } else if(isTRUE(heatmap)) {
     FUN(x,
-        distfun = function(x) as.dist(1-x),
+        distfun = distfun,
         hclustfun = function(...) hclust(..., method=method),
         symm = T, keep.dendro = T, labRow=labRow, col=col, ...)
   } else {
-    hclust(as.dist(1-x), method = method, ...)
+    hclust(distfun(x), method = method, ...)
   }
 }
+
+cosine_heatmap <- connectivity_heatmap

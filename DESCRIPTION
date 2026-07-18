@@ -13,15 +13,17 @@ Description: Provides data source agnostic utility functions to support
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
-Imports: 
+RoxygenNote: 7.3.3
+Imports:
     bit64,
     checkmate,
     glue,
     Matrix (>= 1.5-3),
+    memoise,
+    methods,
     grDevices,
     stats
-Suggests: 
+Suggests:
     covr,
     spelling,
     testthat (>= 3.0.0),
@@ -33,6 +35,8 @@ Suggests:
     rmarkdown,
     dplyr,
     dendroextras
+Enhances: natcpp (>= 0.3.0)
+Remotes: natverse/natcpp@feature/weighted-jaccard
 Language: en-GB
 Config/testthat/edition: 3
 URL: https://github.com/natverse/coconat,

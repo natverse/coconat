@@ -4,3 +4,9 @@
 .Ruserdata
 docs
 inst/doc
+samples/
+tests/testthat/Rplots.pdf
+src/*.o
+src/*.so
+src/*.dll
+src/*.dylib
