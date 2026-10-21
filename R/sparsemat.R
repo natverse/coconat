@@ -215,6 +215,7 @@ align_rows <- function(B, ids) {
 #' running <- effective_connectivity(list(running, colScaleM(A2)),
 #'                                   normalise = FALSE)
 #' running
+
 effective_connectivity <- function(matrices, group=NULL, normalise=TRUE) {
   if(!is.list(matrices) || length(matrices)<1)
     stop("`matrices` must be a list of one or more matrices!")
