@@ -160,7 +160,7 @@ align_rows <- function(B, ids) {
 #'   with \code{\link{colScaleM}} \emph{before} multiplication, implementing the
 #'   assumption that an interneuron conveys information about its inputs in
 #'   proportion to their synaptic weight. This is the procedure described by
-#'   Schlegel et al. (2021) \doi{10.7554/eLife.62576}.
+#'   Li et al. (2021) \doi{10.7554/eLife.62576}.
 #'
 #'   \code{group} collapses the final (output) dimension to groups such as cell
 #'   types. Because grouping is applied \emph{after} normalisation and
@@ -197,7 +197,7 @@ align_rows <- function(B, ids) {
 #' @export
 #' @seealso \code{\link{colScaleM}}, \code{\link{grouping_matrix}},
 #'   \code{\link{partner_summary2adjacency_matrix}}
-#' @references Schlegel et al. (2021) \emph{eLife} \doi{10.7554/eLife.62576}
+#' @references Li et al. (2021) \emph{eLife} \doi{10.7554/eLife.62576}
 #' @examples
 #' library(Matrix)
 #' set.seed(42)

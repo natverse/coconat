@@ -43,7 +43,7 @@ Each supplied matrix must be oriented with presynaptic (input)
   with \code{\link{colScaleM}} \emph{before} multiplication, implementing the
   assumption that an interneuron conveys information about its inputs in
   proportion to their synaptic weight. This is the procedure described by
-  Schlegel et al. (2021) \doi{10.7554/eLife.62576}.
+  Li et al. (2021) \doi{10.7554/eLife.62576}.
 
   \code{group} collapses the final (output) dimension to groups such as cell
   types. Because grouping is applied \emph{after} normalisation and
@@ -84,7 +84,7 @@ running <- effective_connectivity(list(running, colScaleM(A2)),
 running
 }
 \references{
-Schlegel et al. (2021) \emph{eLife} \doi{10.7554/eLife.62576}
+Li et al. (2021) \emph{eLife} \doi{10.7554/eLife.62576}
 }
 \seealso{
 \code{\link{colScaleM}}, \code{\link{grouping_matrix}},
