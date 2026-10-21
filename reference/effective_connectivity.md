@@ -54,7 +54,7 @@ When `normalise=TRUE` (the default) every matrix is column-normalised
 with [`colScaleM`](https://natverse.org/coconat/reference/colScaleM.md)
 *before* multiplication, implementing the assumption that an interneuron
 conveys information about its inputs in proportion to their synaptic
-weight. This is the procedure described by Schlegel et al. (2021)
+weight. This is the procedure described by Li et al. (2021)
 [doi:10.7554/eLife.62576](https://doi.org/10.7554/eLife.62576) .
 
 `group` collapses the final (output) dimension to groups such as cell
@@ -81,7 +81,7 @@ clustering does) rather than committing to the whole chain up front.
 
 ## References
 
-Schlegel et al. (2021) *eLife*
+Li et al. (2021) *eLife*
 [doi:10.7554/eLife.62576](https://doi.org/10.7554/eLife.62576)
 
 ## See also
